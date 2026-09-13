@@ -1,9 +1,13 @@
 package raizes_do_nordeste.domain.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Unidade {
@@ -13,7 +17,9 @@ public class Unidade {
 	private Integer id;
 	private String nome;
 	private String endereco;
-	
+	@OneToMany(mappedBy = "unidade")
+	private List<EstoqueProduto> estoques = new ArrayList<>();
+
 	//contrutor
 	public Unidade() {
 	}
@@ -41,6 +47,14 @@ public class Unidade {
 
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
+	}
+	
+	public List<EstoqueProduto> getEstoques() {
+		return estoques;
+	}
+
+	public void setEstoques(List<EstoqueProduto> estoques) {
+		this.estoques = estoques;
 	}
 	
 	

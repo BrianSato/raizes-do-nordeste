@@ -18,7 +18,7 @@ public class Fidelizacao {
 	private Integer id;
 	private Integer saldoPontos;
 	private boolean consentimento;
-	@OneToOne(mappedBy = "fidelizacao")
+	@OneToOne
 	private Usuario usuario;
 	@OneToMany(mappedBy = "fidelizacao")
 	private List<MovimentacaoFidelidade> movimentacoes = new ArrayList<>();

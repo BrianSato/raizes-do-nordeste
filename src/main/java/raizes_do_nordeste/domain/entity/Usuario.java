@@ -24,7 +24,6 @@ public class Usuario {
 	private String senha;
 	@Enumerated(EnumType.STRING)
 	private Role role;
-	
 	@OneToMany(mappedBy = "usuario")
 	List<Pedido> pedidos;
 	@OneToOne(mappedBy = "usuario")
