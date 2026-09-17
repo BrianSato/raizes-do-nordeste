@@ -28,7 +28,7 @@ public class PedidoController {
 	
 	//métodos
 	@GetMapping("/{id}")
-	public Pedido buscarPorId(@PathVariable Integer id) {
+	public PedidoResponse buscarPorId(@PathVariable Integer id) {
 		return pedidoService.buscarPorId(id);
 	}
 	@PostMapping

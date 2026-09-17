@@ -42,8 +42,13 @@ public class PedidoService {
 	}
 	
 	//métodos
-	public Pedido buscarPorId(Integer id) {
-		return pedidoRepository.findById(id).orElse(null);
+	public PedidoResponse buscarPorId(Integer id) {
+		
+		Pedido pedido = pedidoRepository
+				.findById(id)
+				.orElseThrow();
+		
+		return converterParaResponse(pedido);
 	}
 	
 	public Pedido salvar(Pedido pedido) {
