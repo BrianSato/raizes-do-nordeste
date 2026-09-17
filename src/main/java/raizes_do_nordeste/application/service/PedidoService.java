@@ -15,6 +15,7 @@ import raizes_do_nordeste.domain.entity.Pedido;
 import raizes_do_nordeste.domain.entity.Produto;
 import raizes_do_nordeste.domain.entity.Unidade;
 import raizes_do_nordeste.domain.entity.Usuario;
+import raizes_do_nordeste.domain.enums.StatusPedido;
 import raizes_do_nordeste.infrastructure.repository.PedidoRepository;
 import raizes_do_nordeste.infrastructure.repository.ProdutoRepository;
 import raizes_do_nordeste.infrastructure.repository.UnidadeRepository;
@@ -85,6 +86,18 @@ public class PedidoService {
 		
 		return converterParaResponse(pedidoSalvo);
 		
+	}
+	public PedidoResponse atualizarStatus(Integer id, StatusPedido novoStatus) {
+		
+		Pedido pedido = pedidoRepository
+				.findById(id)
+				.orElseThrow();
+		
+		pedido.atualizarStatus(novoStatus);
+		
+		Pedido pedidoSalvo = pedidoRepository.save(pedido);
+		
+		return converterParaResponse(pedidoSalvo);
 	}
 	
 	private PedidoResponse converterParaResponse(Pedido pedido) {

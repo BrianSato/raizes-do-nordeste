@@ -97,9 +97,32 @@ public class Pedido {
 		itens.add(item);
 		item.setPedido(this);
 	}
+	
 	public void atualizarStatus(StatusPedido novoStatus) {
-		status = novoStatus;
+		
+		if(novoStatus == null) {
+			throw new IllegalArgumentException("O novo status não pode ser nulo");
+		}
+		
+		boolean transicaoValida = 
+				(status == StatusPedido.AGUARDANDO_PAGAMENTO
+					&& novoStatus == StatusPedido.PAGAMENTO_APROVADO)
+				|| (status == StatusPedido.PAGAMENTO_APROVADO
+					&& novoStatus == StatusPedido.EM_PREPARACAO)
+				|| (status == StatusPedido.EM_PREPARACAO
+					&& novoStatus == StatusPedido.PRONTO)
+				|| (status == StatusPedido.PRONTO
+					&& novoStatus == StatusPedido.ENTREGUE);
+		
+		if(!transicaoValida) {
+			throw new IllegalStateException(
+					"Transição de status inválida: " 
+					+ status + "→" + novoStatus);
+		}
+		
+		this.status = novoStatus;
 	}
+	
 	public double calcularTotal() {
 		double total = 0;
 		for(ItemPedido item : itens) {
