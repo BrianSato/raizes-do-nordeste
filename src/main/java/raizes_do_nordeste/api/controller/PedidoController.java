@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import raizes_do_nordeste.api.dto.PedidoRequest;
 import raizes_do_nordeste.api.dto.PedidoResponse;
 import raizes_do_nordeste.application.service.PedidoService;
-import raizes_do_nordeste.domain.entity.Pedido;
 import raizes_do_nordeste.domain.enums.StatusPedido;
 
 @RestController

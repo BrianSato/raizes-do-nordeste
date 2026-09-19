@@ -52,6 +52,14 @@ public class Fidelizacao {
 		this.consentimento = consentimento;
 	}
 	
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
 	//métodos
 	public void adicionarPontos(Integer pontos) {
 		

@@ -76,7 +76,4 @@ public class Produto {
 	public void setEstoques(List<EstoqueProduto> estoques) {
 		this.estoques = estoques;
 	}
-	
-	
-	
 }

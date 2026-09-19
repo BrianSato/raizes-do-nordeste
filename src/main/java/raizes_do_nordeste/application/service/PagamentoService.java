@@ -28,6 +28,15 @@ public class PagamentoService {
 	}
 	
 	//métodos
+	public PagamentoResponse buscarPorId(Integer id) {
+		
+		Pagamento pagamento = pagamentoRepository
+				.findById(id)
+				.orElseThrow();
+		
+		return converterParaResponse(pagamento);
+	}
+	
 	public PagamentoResponse processarPagamento(PagamentoRequest pagamentoRequest) {
 		
 		Pedido pedido = pedidoRepository

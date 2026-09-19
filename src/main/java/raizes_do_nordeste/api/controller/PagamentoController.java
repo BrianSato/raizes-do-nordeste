@@ -1,5 +1,7 @@
 package raizes_do_nordeste.api.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,12 @@ public class PagamentoController {
 	//construtor
 	public PagamentoController(PagamentoService pagamentoService) {
 		this.pagamentoService = pagamentoService;
+	}
+	
+	//métodos
+	@GetMapping("/{id}")
+	public PagamentoResponse buscarPorId(@PathVariable Integer id) {
+		return pagamentoService.buscarPorId(id);
 	}
 	
 	@PostMapping
