@@ -1,6 +1,7 @@
 package raizes_do_nordeste.api.exception;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,21 @@ public class GlobalExceptionHandler {
 		
 		return ResponseEntity
 				.status(HttpStatus.UNAUTHORIZED)
+				.body(erro);
+	}
+	@ExceptionHandler(NoSuchElementException.class)
+	public ResponseEntity<ErroResponse> tratarRecursoEncontrado(
+			NoSuchElementException exception){
+		
+		ErroResponse erro = new ErroResponse(
+				LocalDateTime.now(),
+				HttpStatus.NOT_FOUND.value(),
+				"RECURSO_NAO_ENCONTRADO",
+				"Recurso não encontrado"
+		);
+		
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
 				.body(erro);
 	}
 }

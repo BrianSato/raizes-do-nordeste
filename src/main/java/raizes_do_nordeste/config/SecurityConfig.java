@@ -23,8 +23,21 @@ public class SecurityConfig {
 				"/produtos",
 				"/produtos/**",
 				"/unidades/**"
-				).permitAll()
-				.anyRequest().authenticated()
+		).permitAll()
+		
+		.requestMatchers("/pedidos/**")
+		.hasAnyRole("CLIENTE", "ATENDENTE", "GERENTE")
+		
+		.requestMatchers("/pagamentos/**")
+		.hasAnyRole("CLIENTE", "ATENDENTE", " GERENTE")
+		
+		.requestMatchers("/fidelidade/**")
+		.hasAnyRole("CLIENTE", "GERENTE")
+		
+		.requestMatchers("/estoque/**")
+		.hasRole("GERENTE")
+		
+		.anyRequest().authenticated()
 		)
 		.addFilterBefore(
 				new JwtAuthenticationFilter(), 
