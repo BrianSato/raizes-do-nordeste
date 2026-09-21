@@ -26,4 +26,19 @@ public class GlobalExceptionHandler {
                 .body(erro);
 				
 	}
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<ErroResponse> tratarErroDeAutenticacao(
+			IllegalArgumentException exception){
+		
+		ErroResponse erro = new ErroResponse(
+				LocalDateTime.now(),
+				HttpStatus.UNAUTHORIZED.value(),
+				"AUTENTICACAO",
+				exception.getMessage()
+		);
+		
+		return ResponseEntity
+				.status(HttpStatus.UNAUTHORIZED)
+				.body(erro);
+	}
 }
