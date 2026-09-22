@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import raizes_do_nordeste.api.dto.PedidoRequest;
 import raizes_do_nordeste.api.dto.PedidoResponse;
 import raizes_do_nordeste.application.service.PedidoService;
@@ -31,7 +32,7 @@ public class PedidoController {
 		return pedidoService.buscarPorId(id);
 	}
 	@PostMapping
-	public PedidoResponse criarPedido(@RequestBody PedidoRequest pedidoRequest) {
+	public PedidoResponse criarPedido(@Valid @RequestBody PedidoRequest pedidoRequest) {
 		return pedidoService.criarPedido(pedidoRequest);
 	}
 	@PutMapping("/{id}/status")

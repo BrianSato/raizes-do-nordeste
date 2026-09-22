@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import raizes_do_nordeste.api.dto.AuthRequest;
 import raizes_do_nordeste.api.dto.AuthResponse;
+import raizes_do_nordeste.api.exception.AutenticacaoException;
 import raizes_do_nordeste.config.JwtService;
 import raizes_do_nordeste.domain.entity.Usuario;
 import raizes_do_nordeste.infrastructure.repository.UsuarioRepository;
@@ -38,7 +39,7 @@ public class AuthService {
 				authRequest.getSenha(),
 				usuario.getSenha())) {
 			
-			throw new IllegalArgumentException("Senha inválida.");
+			throw new AutenticacaoException("Senha inválida.");
 		}
 		
 		String token = jwtService.gerarToken(
