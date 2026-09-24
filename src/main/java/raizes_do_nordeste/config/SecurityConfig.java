@@ -1,5 +1,7 @@
 package raizes_do_nordeste.config;
 
+import java.nio.file.AccessDeniedException;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,7 +31,7 @@ public class SecurityConfig {
 		.hasAnyRole("CLIENTE", "ATENDENTE", "GERENTE")
 		
 		.requestMatchers("/pagamentos/**")
-		.hasAnyRole("CLIENTE", "ATENDENTE", " GERENTE")
+		.hasAnyRole("CLIENTE", "ATENDENTE", "GERENTE")
 		
 		.requestMatchers("/fidelidade/**")
 		.hasAnyRole("CLIENTE", "GERENTE")
@@ -39,6 +41,18 @@ public class SecurityConfig {
 		
 		.anyRequest().authenticated()
 		)
+		.exceptionHandling(exception -> exception
+			.authenticationEntryPoint(
+					(request,response,authException) -> {
+						response.setStatus(401);
+					}
+				)
+			.accessDeniedHandler(
+					(request,response,AccessDeniedException) -> {
+						response.setStatus(403);
+					}
+				)
+			)
 		.addFilterBefore(
 				new JwtAuthenticationFilter(), 
 				UsernamePasswordAuthenticationFilter.class

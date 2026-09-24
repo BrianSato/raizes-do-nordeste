@@ -50,12 +50,20 @@ public class PagamentoService {
 		pagamento.setValor(pedido.getValorTotal());
 		
 		//pagamento mock
-		pagamento.setStatus(StatusPagamento.APROVADO);
+		if(pagamentoRequest.getAprovado()) {
+			pagamento.setStatus(StatusPagamento.APROVADO);
+		}else {
+			pagamento.setStatus(StatusPagamento.RECUSADO);
+		}
+	
 		pagamento.setDataHora(LocalDateTime.now());
 		
 		Pagamento pagamentoSalvo = pagamentoRepository.save(pagamento);
 		
-		pedido.atualizarStatus(StatusPedido.PAGAMENTO_APROVADO);
+		if(pagamento.getStatus() == StatusPagamento.APROVADO) {
+			pedido.atualizarStatus(StatusPedido.PAGAMENTO_APROVADO);
+		}
+		
 		pedidoRepository.save(pedido);
 		
 		return converterParaResponse(pagamentoSalvo);

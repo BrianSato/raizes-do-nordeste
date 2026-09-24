@@ -10,12 +10,14 @@ import raizes_do_nordeste.api.dto.ItemPedidoRequest;
 import raizes_do_nordeste.api.dto.ItemPedidoResponse;
 import raizes_do_nordeste.api.dto.PedidoRequest;
 import raizes_do_nordeste.api.dto.PedidoResponse;
+import raizes_do_nordeste.domain.entity.EstoqueProduto;
 import raizes_do_nordeste.domain.entity.ItemPedido;
 import raizes_do_nordeste.domain.entity.Pedido;
 import raizes_do_nordeste.domain.entity.Produto;
 import raizes_do_nordeste.domain.entity.Unidade;
 import raizes_do_nordeste.domain.entity.Usuario;
 import raizes_do_nordeste.domain.enums.StatusPedido;
+import raizes_do_nordeste.infrastructure.repository.EstoqueProdutoRepository;
 import raizes_do_nordeste.infrastructure.repository.PedidoRepository;
 import raizes_do_nordeste.infrastructure.repository.ProdutoRepository;
 import raizes_do_nordeste.infrastructure.repository.UnidadeRepository;
@@ -28,17 +30,18 @@ public class PedidoService {
 	private final ProdutoRepository produtoRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final UnidadeRepository unidadeRepository;
+	private final EstoqueProdutoRepository estoqueProdutoRepository;
 	
 	//construtor
-	public PedidoService(
-			ProdutoRepository produtoRepository,
-			PedidoRepository pedidoRepository,
-			UsuarioRepository usuarioRepository,
-			UnidadeRepository unidadeRepository) {
-		this.produtoRepository = produtoRepository;
+	public PedidoService(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository,
+			UsuarioRepository usuarioRepository, UnidadeRepository unidadeRepository,
+			EstoqueProdutoRepository estoqueProdutoRepository) {
+		super();
 		this.pedidoRepository = pedidoRepository;
+		this.produtoRepository = produtoRepository;
 		this.usuarioRepository = usuarioRepository;
 		this.unidadeRepository = unidadeRepository;
+		this.estoqueProdutoRepository = estoqueProdutoRepository;
 	}
 	
 	//métodos
@@ -50,7 +53,6 @@ public class PedidoService {
 		
 		return converterParaResponse(pedido);
 	}
-	
 	public Pedido salvar(Pedido pedido) {
 		return pedidoRepository.save(pedido);
 	}
@@ -63,6 +65,7 @@ public class PedidoService {
 		Usuario usuario = usuarioRepository
 				.findById(pedidoRequest.getUsuarioId())
 				.orElseThrow();
+		
 		Unidade unidade = unidadeRepository
 				.findById(pedidoRequest.getUnidadeId())
 				.orElseThrow();
@@ -76,6 +79,18 @@ public class PedidoService {
 					.findById(itemRequest.getProdutoId())
 					.orElseThrow();
 			
+			EstoqueProduto estoque = estoqueProdutoRepository
+					.findByProdutoAndUnidade(produto, unidade)
+					.orElseThrow(() -> new IllegalStateException(
+							"Produto não disponível nesta unidade"
+							));
+			
+			if(estoque.getQuantidade() < itemRequest.getQuantidade()) {
+				throw new IllegalStateException(
+						"Estoque insuficiente para o produto: " + produto.getNome()
+				);
+				
+			}
 			ItemPedido item = new ItemPedido();
 			
 			item.setProduto(produto);

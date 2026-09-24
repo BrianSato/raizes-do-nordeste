@@ -4,6 +4,7 @@ public class PagamentoRequest {
 	
 	private Integer pedidoId;
 	private String formaPagamento;
+	private Boolean aprovado;
 	
 	//getters e setters
 	public Integer getPedidoId() {
@@ -17,6 +18,12 @@ public class PagamentoRequest {
 	}
 	public void setFormaPagamento(String formaPagamento) {
 		this.formaPagamento = formaPagamento;
+	}
+	public Boolean getAprovado() {
+		return aprovado;
+	}
+	public void setAprovado(Boolean aprovado) {
+		this.aprovado = aprovado;
 	}
 	
 }
