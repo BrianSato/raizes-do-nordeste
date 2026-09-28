@@ -3,13 +3,17 @@ package raizes_do_nordeste.application.service;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import raizes_do_nordeste.api.dto.PagamentoRequest;
 import raizes_do_nordeste.api.dto.PagamentoResponse;
+import raizes_do_nordeste.domain.entity.EstoqueProduto;
+import raizes_do_nordeste.domain.entity.ItemPedido;
 import raizes_do_nordeste.domain.entity.Pagamento;
 import raizes_do_nordeste.domain.entity.Pedido;
 import raizes_do_nordeste.domain.enums.StatusPagamento;
 import raizes_do_nordeste.domain.enums.StatusPedido;
+import raizes_do_nordeste.infrastructure.repository.EstoqueProdutoRepository;
 import raizes_do_nordeste.infrastructure.repository.PagamentoRepository;
 import raizes_do_nordeste.infrastructure.repository.PedidoRepository;
 
@@ -18,13 +22,16 @@ public class PagamentoService {
 	
 	private final PagamentoRepository pagamentoRepository;
 	private final PedidoRepository pedidoRepository;
+	private final EstoqueProdutoRepository estoqueProdutoRepository;
 
 	//construtor
 	public PagamentoService(
 			PagamentoRepository pagamentoRepository,
-			PedidoRepository pedidoRepository) {
+			PedidoRepository pedidoRepository,
+			EstoqueProdutoRepository estoqueProdutoRepository) {
 		this.pagamentoRepository = pagamentoRepository;
 		this.pedidoRepository = pedidoRepository;
+		this.estoqueProdutoRepository = estoqueProdutoRepository;
 	}
 	
 	//métodos
@@ -37,15 +44,22 @@ public class PagamentoService {
 		return converterParaResponse(pagamento);
 	}
 	
+	@Transactional
 	public PagamentoResponse processarPagamento(PagamentoRequest pagamentoRequest) {
 		
 		Pedido pedido = pedidoRepository
 				.findById(pagamentoRequest.getPedidoId())
 				.orElseThrow();
 		
+		if(pedido.getPagamento() != null) {
+			throw new IllegalStateException(
+					"Pedido já possui um pagamento registrado");
+		}
+		
 		Pagamento pagamento = new Pagamento();
 		
 		pagamento.setPedido(pedido);
+		pedido.setPagamento(pagamento);
 		pagamento.setFormaPagamento(pagamentoRequest.getFormaPagamento());
 		pagamento.setValor(pedido.getValorTotal());
 		
@@ -61,6 +75,21 @@ public class PagamentoService {
 		Pagamento pagamentoSalvo = pagamentoRepository.save(pagamento);
 		
 		if(pagamento.getStatus() == StatusPagamento.APROVADO) {
+
+			for(ItemPedido item : pedido.getItens()) {
+				
+				EstoqueProduto estoque  = estoqueProdutoRepository
+						.findByProdutoAndUnidade(
+								item.getProduto(),
+								pedido.getUnidade())
+						.orElseThrow(() -> new IllegalStateException(
+								"Produto não disponível no estoque da unidade"));
+				
+				estoque.removerQuantidade(item.getQuantidade());
+				
+				estoqueProdutoRepository.save(estoque);
+			}
+			
 			pedido.atualizarStatus(StatusPedido.PAGAMENTO_APROVADO);
 		}
 		

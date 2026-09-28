@@ -92,6 +92,14 @@ public class Pedido {
 		this.itens = itens;
 	}
 	
+	public Pagamento getPagamento() {
+		return pagamento;
+	}
+
+	public void setPagamento(Pagamento pagamento) {
+		this.pagamento = pagamento;
+	}
+
 	//Métodos
 	public void adicionarItem(ItemPedido item) {
 		itens.add(item);
