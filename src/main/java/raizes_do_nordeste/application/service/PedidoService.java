@@ -143,6 +143,18 @@ public class PedidoService {
 		
 		return converterParaResponse(pedidoSalvo);
 	}
+	public PedidoResponse cancelarPedido(Integer id) {
+		
+		Pedido pedido = pedidoRepository
+				.findById(id)
+				.orElseThrow();
+		
+		pedido.cancelar();
+		
+		Pedido pedidoSalvo = pedidoRepository.save(pedido);
+		
+		return converterParaResponse(pedidoSalvo);
+	}
 	
 	private PedidoResponse converterParaResponse(Pedido pedido) {
 		PedidoResponse response = new PedidoResponse();

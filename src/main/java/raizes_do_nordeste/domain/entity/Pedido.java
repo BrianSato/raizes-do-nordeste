@@ -135,7 +135,7 @@ public class Pedido {
 		if(status == StatusPedido.PRONTO 
 				|| status == StatusPedido.ENTREGUE 
 				|| status == StatusPedido.CANCELADO) {
-			throw new IllegalArgumentException("Pedido não pode ser cancelado");
+			throw new IllegalStateException("Pedido não pode ser cancelado");
 		}
 		status = StatusPedido.CANCELADO;
 	}

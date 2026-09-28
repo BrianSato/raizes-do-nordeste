@@ -59,4 +59,9 @@ public class PedidoController {
 		
 		return pedidoService.atualizarStatus(id, novoStatus);
 	}
+	@PutMapping("/{id}/cancelar")
+	public PedidoResponse cancelarPedido(@PathVariable Integer id) {
+		
+		return pedidoService.cancelarPedido(id);
+	}
 }
