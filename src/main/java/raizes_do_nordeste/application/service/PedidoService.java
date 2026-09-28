@@ -16,6 +16,7 @@ import raizes_do_nordeste.domain.entity.Pedido;
 import raizes_do_nordeste.domain.entity.Produto;
 import raizes_do_nordeste.domain.entity.Unidade;
 import raizes_do_nordeste.domain.entity.Usuario;
+import raizes_do_nordeste.domain.enums.CanalPedido;
 import raizes_do_nordeste.domain.enums.StatusPedido;
 import raizes_do_nordeste.infrastructure.repository.EstoqueProdutoRepository;
 import raizes_do_nordeste.infrastructure.repository.PedidoRepository;
@@ -52,6 +53,29 @@ public class PedidoService {
 				.orElseThrow();
 		
 		return converterParaResponse(pedido);
+	}
+	public List<PedidoResponse> listarPedidos(
+			StatusPedido status,
+			CanalPedido canalPedido){
+		
+		List<Pedido> pedidos;
+		
+		if(status != null && canalPedido != null) {
+			pedidos = pedidoRepository
+					.findByStatusAndCanalPedido(status, canalPedido);
+		} else if(status != null) {
+			pedidos = pedidoRepository
+					.findByStatus(status);
+		}else if(canalPedido != null) {
+			pedidos = pedidoRepository
+					.findByCanalPedido(canalPedido);
+		}else {
+			pedidos = pedidoRepository.findAll();
+		}
+		
+		return pedidos.stream()
+				.map(this::converterParaResponse)
+				.toList();
 	}
 	public Pedido salvar(Pedido pedido) {
 		return pedidoRepository.save(pedido);

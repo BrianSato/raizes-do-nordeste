@@ -1,7 +1,5 @@
 package raizes_do_nordeste.config;
 
-import java.nio.file.AccessDeniedException;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,7 +25,7 @@ public class SecurityConfig {
 				"/unidades/**"
 		).permitAll()
 		
-		.requestMatchers("/pedidos/**")
+		.requestMatchers("/pedidos","/pedidos/**")
 		.hasAnyRole("CLIENTE", "ATENDENTE", "GERENTE")
 		
 		.requestMatchers("/pagamentos/**")

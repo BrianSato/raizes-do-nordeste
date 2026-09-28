@@ -1,5 +1,7 @@
 package raizes_do_nordeste.api.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +16,7 @@ import jakarta.validation.Valid;
 import raizes_do_nordeste.api.dto.PedidoRequest;
 import raizes_do_nordeste.api.dto.PedidoResponse;
 import raizes_do_nordeste.application.service.PedidoService;
+import raizes_do_nordeste.domain.enums.CanalPedido;
 import raizes_do_nordeste.domain.enums.StatusPedido;
 
 @RestController
@@ -28,6 +31,13 @@ public class PedidoController {
 	}
 	
 	//métodos
+	@GetMapping
+	public List<PedidoResponse> listarPedidos(
+			@RequestParam(required = false) StatusPedido status,
+			@RequestParam(required = false) CanalPedido canalPedido){
+		
+		return pedidoService.listarPedidos(status, canalPedido);
+	}
 	@GetMapping("/{id}")
 	public PedidoResponse buscarPorId(@PathVariable Integer id) {
 		return pedidoService.buscarPorId(id);
