@@ -8,12 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import raizes_do_nordeste.api.dto.PagamentoRequest;
 import raizes_do_nordeste.api.dto.PagamentoResponse;
 import raizes_do_nordeste.domain.entity.EstoqueProduto;
+import raizes_do_nordeste.domain.entity.Fidelizacao;
 import raizes_do_nordeste.domain.entity.ItemPedido;
 import raizes_do_nordeste.domain.entity.Pagamento;
 import raizes_do_nordeste.domain.entity.Pedido;
 import raizes_do_nordeste.domain.enums.StatusPagamento;
 import raizes_do_nordeste.domain.enums.StatusPedido;
 import raizes_do_nordeste.infrastructure.repository.EstoqueProdutoRepository;
+import raizes_do_nordeste.infrastructure.repository.FidelizacaoRepository;
 import raizes_do_nordeste.infrastructure.repository.PagamentoRepository;
 import raizes_do_nordeste.infrastructure.repository.PedidoRepository;
 
@@ -23,15 +25,18 @@ public class PagamentoService {
 	private final PagamentoRepository pagamentoRepository;
 	private final PedidoRepository pedidoRepository;
 	private final EstoqueProdutoRepository estoqueProdutoRepository;
+	private final FidelizacaoRepository fidelizacaoRepository;
 
 	//construtor
 	public PagamentoService(
 			PagamentoRepository pagamentoRepository,
 			PedidoRepository pedidoRepository,
-			EstoqueProdutoRepository estoqueProdutoRepository) {
+			EstoqueProdutoRepository estoqueProdutoRepository,
+			FidelizacaoRepository fidelizacaoRepository) {
 		this.pagamentoRepository = pagamentoRepository;
 		this.pedidoRepository = pedidoRepository;
 		this.estoqueProdutoRepository = estoqueProdutoRepository;
+		this.fidelizacaoRepository = fidelizacaoRepository;
 	}
 	
 	//métodos
@@ -91,6 +96,19 @@ public class PagamentoService {
 			}
 			
 			pedido.atualizarStatus(StatusPedido.PAGAMENTO_APROVADO);
+			
+			Fidelizacao fidelizacao = fidelizacaoRepository
+					.findByUsuario(pedido.getUsuario())
+					.orElse(null);
+			
+			if(fidelizacao != null && fidelizacao.isConsentimento()) {
+				
+				Integer pontos = pedido.getValorTotal().intValue();
+				
+				fidelizacao.adicionarPontos(pontos);
+				
+				fidelizacaoRepository.save(fidelizacao);
+			}
 		}
 		
 		pedidoRepository.save(pedido);

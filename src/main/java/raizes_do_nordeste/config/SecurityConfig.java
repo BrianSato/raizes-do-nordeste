@@ -22,7 +22,8 @@ public class SecurityConfig {
 				"/auth/**",
 				"/produtos",
 				"/produtos/**",
-				"/unidades/**"
+				"/unidades/**",
+				"/error"
 		).permitAll()
 		
 		.requestMatchers("/pedidos","/pedidos/**")
@@ -31,7 +32,7 @@ public class SecurityConfig {
 		.requestMatchers("/pagamentos/**")
 		.hasAnyRole("CLIENTE", "ATENDENTE", "GERENTE")
 		
-		.requestMatchers("/fidelidade/**")
+		.requestMatchers("/fidelidade","/fidelidade/**")
 		.hasAnyRole("CLIENTE", "GERENTE")
 		
 		.requestMatchers("/estoque/**")
@@ -42,11 +43,13 @@ public class SecurityConfig {
 		.exceptionHandling(exception -> exception
 			.authenticationEntryPoint(
 					(request,response,authException) -> {
+						
 						response.setStatus(401);
 					}
 				)
 			.accessDeniedHandler(
-					(request,response,AccessDeniedException) -> {
+					(request,response,accessDeniedException) -> {
+						
 						response.setStatus(403);
 					}
 				)
