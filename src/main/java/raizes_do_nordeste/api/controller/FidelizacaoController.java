@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import raizes_do_nordeste.api.dto.FidelizacaoPontosRequest;
 import raizes_do_nordeste.api.dto.FidelizacaoRequest;
 import raizes_do_nordeste.api.dto.FidelizacaoResponse;
@@ -14,6 +15,7 @@ import raizes_do_nordeste.application.service.FidelizacaoService;
 
 @RestController
 @RequestMapping("/fidelidade")
+@SecurityRequirement(name = "bearerAuth")
 public class FidelizacaoController {
 
 	private final FidelizacaoService fidelizacaoService;

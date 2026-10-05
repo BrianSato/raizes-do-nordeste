@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import raizes_do_nordeste.api.dto.PagamentoRequest;
 import raizes_do_nordeste.api.dto.PagamentoResponse;
 import raizes_do_nordeste.application.service.PagamentoService;
 
 @RestController
 @RequestMapping("/pagamentos")
+@SecurityRequirement(name = "bearerAuth")
 public class PagamentoController {
 
 	private final PagamentoService pagamentoService;

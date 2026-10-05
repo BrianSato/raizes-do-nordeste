@@ -23,7 +23,10 @@ public class SecurityConfig {
 				"/produtos",
 				"/produtos/**",
 				"/unidades/**",
-				"/error"
+				"/error",
+				"/v3/api-docs/**",
+				"/swagger-ui/**",
+				"/swagger-ui.html"
 		).permitAll()
 		
 		.requestMatchers("/pedidos","/pedidos/**")
