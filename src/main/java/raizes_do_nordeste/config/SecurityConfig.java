@@ -2,6 +2,7 @@ package raizes_do_nordeste.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,8 +36,17 @@ public class SecurityConfig {
 		.requestMatchers("/pagamentos/**")
 		.hasAnyRole("CLIENTE", "ATENDENTE", "GERENTE")
 		
-		.requestMatchers("/fidelidade","/fidelidade/**")
+		.requestMatchers(HttpMethod.GET,"/fidelidade/**")
 		.hasAnyRole("CLIENTE", "GERENTE")
+		
+		.requestMatchers(HttpMethod.POST,"/fidelidade")
+		.hasRole("GERENTE")
+				
+		.requestMatchers(HttpMethod.POST,"/fidelidade/{id}/pontos")
+		.hasRole("GERENTE")
+		
+		.requestMatchers(HttpMethod.POST,"/fidelidade/{id}/pontos/utilizar")
+		.hasAnyRole("CLIENTE","GERENTE")
 		
 		.requestMatchers("/estoque/**")
 		.hasRole("GERENTE")
