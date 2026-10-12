@@ -77,6 +77,9 @@ http://localhost:8080
 ```
 
 A aplicação deve permanecer em execução durante os testes realizados pelo Postman.
+
+---
+
 ## 5. Dados utilizados nos testes
 
 Os testes foram realizados utilizando dados previamente cadastrados no banco de dados.
@@ -110,13 +113,23 @@ O usuário possui perfil adequado para a execução dos testes de pedidos e paga
 
 ### Estoque
 
-Para os testes de validação de estoque, foi utilizado:
+O registro de estoque utilizado nos testes corresponde ao produto `1` na unidade `1`. A quantidade disponível pode variar conforme a execução dos testes de pagamento aprovado, que consomem estoque.
 
-| Produto           | Unidade        | Quantidade |
-| ----------------- | -------------- | ---------: |
-| Coxinha de Frango | Unidade Centro |          2 |
+| Produto | Unidade | Quantidade de referência |
+|---|---|---:|
+| Coxinha de Frango | Unidade Centro | 10 |
 
-Essa quantidade permite testar tanto uma solicitação válida quanto uma solicitação com estoque insuficiente.
+Antes de executar a sequência completa, confira a quantidade atual no banco de dados. Se necessário, restaure o estoque para 10 unidades com a seguinte instrução SQL:
+
+```sql
+UPDATE estoque_produto
+SET quantidade = 10
+WHERE id = 1
+  AND produto_id = 1
+  AND unidade_id = 1;
+```
+
+O teste T08 utiliza a variável de ambiente `quantidadeEstoqueInsuficiente`, configurada com o valor `9999`, para solicitar uma quantidade superior ao estoque de referência e verificar o retorno `409 Conflict`.
 
 ---
 
@@ -186,14 +199,15 @@ Para reproduzir os testes, recomenda-se executar as requisições na seguinte or
 ### Pagamento aprovado
 
 9. **T09.1 - Criar pedido para pagamento**
-10. **T09.2 - Pagamento aprovado**
-11. **T09.3 - Confirmar status do pedido**
+10. **T09.1.1 - Pagamento sem campo aprovado**
+11. **T09.2 - Pagamento aprovado**
+12. **T09.3 - Confirmar status do pedido**
 
 ### Pagamento recusado
 
-12. **T10.1 - Criar pedido para pagamento recusado**
-13. **T10.2 - Pagamento recusado**
-14. **T10.3 - Confirmar status após pagamento recusado**
+13. **T10.1 - Criar pedido para pagamento recusado**
+14. **T10.2 - Pagamento recusado**
+15. **T10.3 - Confirmar status após pagamento recusado**
 
 Os testes T09 e T10 possuem mais de uma requisição porque representam fluxos completos, nos quais o resultado de uma etapa é utilizado na etapa seguinte.
 ## 8. Cenários de teste
@@ -322,7 +336,7 @@ Os cenários abaixo foram executados utilizando a coleção Postman disponibiliz
 
 **Endpoint:** `POST /pedidos`
 
-**Pré-condição:** produto existente, unidade existente e estoque disponível igual a 2 unidades.
+**Pré-condição:** usuário autenticado, produto e unidade existentes e estoque disponível inferior à quantidade solicitada no teste (`9999` unidades).
 
 **Entrada:** pedido solicitando quantidade superior ao estoque disponível.
 
@@ -351,6 +365,18 @@ O cenário T09 representa o fluxo principal com pagamento aprovado.
 **Resultado esperado:** `201 Created`, com o pedido criado e status inicial `AGUARDANDO_PAGAMENTO`.
 
 **Evidência:** requisição `T09.1 - Criar pedido para pagamento` na pasta `Pedidos`.
+
+#### T09.1.1 — Validar pagamento sem o campo `aprovado`
+
+**Endpoint:** `POST /pagamentos`
+
+**Pré-condição:** pedido criado no T09.1, com `pedidoId` válido.
+
+**Entrada:** pagamento mock contendo `pedidoId` e `formaPagamento`, sem o campo `aprovado`.
+
+**Resultado esperado:** `400 Bad Request`, devido à ausência do campo obrigatório `aprovado`.
+
+**Evidência:** requisição de teste de validação no Postman, demonstrando o retorno `400 Bad Request`.
 
 #### T09.2 — Pagamento aprovado
 
@@ -433,6 +459,7 @@ O cenário T10 representa o comportamento da API quando o pagamento mock é recu
 | T07   | Negativo | POST   | `/pedidos`                | 404                |
 | T08   | Negativo | POST   | `/pedidos`                | 409                |
 | T09.1 | Positivo | POST   | `/pedidos`                | 201                |
+| T09.1.1 | Negativo | POST   | `/pagamentos` | 400                |
 | T09.2 | Positivo | POST   | `/pagamentos`             | 200                |
 | T09.3 | Positivo | GET    | `/pedidos/{id}`           | 200                |
 | T10.1 | Positivo | POST   | `/pedidos`                | 201                |
