@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import raizes_do_nordeste.api.dto.PagamentoRequest;
 import raizes_do_nordeste.api.dto.PagamentoResponse;
 import raizes_do_nordeste.application.service.PagamentoService;
@@ -32,7 +33,7 @@ public class PagamentoController {
 	
 	@PostMapping
 	public PagamentoResponse processarPagamento(
-			@RequestBody PagamentoRequest pagamentoRequest) {
+			@Valid @RequestBody PagamentoRequest pagamentoRequest) {
 		
 		return pagamentoService.processarPagamento(pagamentoRequest);
 	}

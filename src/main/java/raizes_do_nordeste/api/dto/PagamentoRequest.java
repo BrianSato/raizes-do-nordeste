@@ -1,9 +1,13 @@
 package raizes_do_nordeste.api.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class PagamentoRequest {
 	
 	private Integer pedidoId;
 	private String formaPagamento;
+	
+	@NotNull(message = "O campo aprovado é obrigatório")
 	private Boolean aprovado;
 	
 	//getters e setters
