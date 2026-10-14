@@ -1,5 +1,6 @@
 package raizes_do_nordeste.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +12,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig {
+	
+	@Autowired
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -68,8 +72,8 @@ public class SecurityConfig {
 				)
 			)
 		.addFilterBefore(
-				new JwtAuthenticationFilter(), 
-				UsernamePasswordAuthenticationFilter.class
+		        jwtAuthenticationFilter,
+		        UsernamePasswordAuthenticationFilter.class
 		);
 				
 		return http.build();

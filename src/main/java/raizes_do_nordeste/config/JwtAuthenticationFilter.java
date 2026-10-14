@@ -4,24 +4,36 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	
-	private final Key key = Keys.hmacShaKeyFor(
-			JwtService.SECRET_KEY.getBytes(StandardCharsets.UTF_8)
-	);
+	@Value("${jwt.secret}")
+	private String secret;
+
+	private Key key;
+
+	@PostConstruct
+	public void inicializarChave() {
+	    this.key = Keys.hmacShaKeyFor(
+	            secret.getBytes(StandardCharsets.UTF_8)
+	    );
+	}
 
 	@Override
 	protected void doFilterInternal(

@@ -4,19 +4,27 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 
 @Service
 public class JwtService {
 
-	public static final String SECRET_KEY =
-			"raizes-do-nordeste-chave-secreta-para-jwt-2026";
-	private static final Key key = Keys.hmacShaKeyFor(
-			SECRET_KEY.getBytes(StandardCharsets.UTF_8)
-			);
+	@Value("${jwt.secret}")
+	private String secret;
+
+	private Key key;
+
+	@PostConstruct
+	public void inicializarChave() {
+	    this.key = Keys.hmacShaKeyFor(
+	            secret.getBytes(StandardCharsets.UTF_8)
+	    );
+	}
 	
 	public String gerarToken(Integer usuarioId, String email, String role) {
 		
