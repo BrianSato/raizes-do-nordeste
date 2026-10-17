@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
 				.status(HttpStatus.NOT_FOUND)
 				.body(erro);
 	}
-	/* 404 BAD REQUEST
+	/* 400 BAD REQUEST
 	 * Usada quando a requisição não atende às validações
 	 * definidas nos DTOs, como @NotNull, @NotBlank, etc.
 	 */
