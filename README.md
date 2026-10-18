@@ -138,6 +138,14 @@ O projeto está sendo desenvolvido de forma incremental, priorizando a implement
 
 O processamento de pagamentos é simulado, e o projeto não representa um sistema financeiro real. A interface gráfica não faz parte do escopo deste repositório, que é dedicado ao backend.
 
+## Diagramas do projeto
+
+Os diagramas utilizados na modelagem do sistema estão disponíveis abaixo:
+
+- [DER — Diagrama Entidade-Relacionamento](documentacao/diagramas/projeto_multidiciplinar_DER.drawio.png)
+- [DCD — Diagrama de Classes](documentacao/diagramas/projeto_multidiciplinar_UML.drawio.png)
+- [DCU — Diagrama de Casos de Uso](documentacao/diagramas/projeto_multiciplinar_DCU.drawio.png)
+
 ## Autor
 
 **Brian Sato**
