@@ -2,6 +2,8 @@ package raizes_do_nordeste.api.dto;
 
 import java.util.List;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import raizes_do_nordeste.domain.enums.CanalPedido;
 
@@ -9,11 +11,15 @@ public class PedidoRequest {
 	
 	@NotNull(message = "canalPedido é obrigatório")
 	private CanalPedido canalPedido;
+	@NotNull(message = "usuaraioId é obrigatório")
 	private Integer usuarioId;
+	@NotNull(message = "unidadeId é obrigatório")
 	private Integer unidadeId;
+	@NotEmpty(message = "O pedido deve conter pelo menos um item")
+	@Valid
 	private List<ItemPedidoRequest> itens;
 
-	//getters e setters
+	//getters e setterss
 	public List<ItemPedidoRequest> getItens() {
 		return itens;
 	}
