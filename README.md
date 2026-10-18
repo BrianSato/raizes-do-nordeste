@@ -86,11 +86,22 @@ Essa organização busca separar as responsabilidades, facilitar a manutenção 
 
 ### Configuração do banco de dados
 
-1. Crie o banco de dados `raizes_nordeste` no MySQL, caso ainda não exista.
-2. Configure as credenciais e a URL de conexão no arquivo de configuração da aplicação.
-3. Verifique se o usuário do banco possui as permissões necessárias.
+1. Instale e configure o MySQL.
+2. Crie um banco de dados e um usuário MySQL com as permissões necessárias.
+3. Configure as seguintes variáveis de ambiente:
 
-**Importante:** não publique senhas, tokens ou outras credenciais reais no repositório.
+| Variável | Descrição |
+|---|---|
+| `DB_URL` | URL de conexão com o banco MySQL criado pelo usuário. Exemplo: `jdbc:mysql://localhost:3306/meu_banco` |
+| `DB_USERNAME` | Nome do usuário MySQL configurado para acessar o banco. |
+| `DB_PASSWORD` | Senha definida pelo próprio usuário ao configurar o MySQL. |
+| `JWT_SECRET` | Chave secreta utilizada para assinar e validar os tokens JWT. |
+
+As variáveis podem ser configuradas no sistema operacional ou nas configurações de execução da IDE, como a aba **Environment** do Eclipse.
+
+O arquivo `application.properties` utiliza essas variáveis para obter as configurações necessárias, sem armazenar credenciais no código-fonte.
+
+**Importante:** não publique senhas, chaves secretas ou tokens reais no repositório.
 
 ### Executando a aplicação
 
@@ -103,6 +114,14 @@ mvn spring-boot:run
 Também é possível importar o projeto Maven no Eclipse e executá-lo pela IDE.
 
 A inicialização depende de o banco de dados estar disponível e das configurações locais estarem corretas.
+
+### Documentação da API — Swagger
+
+Com a aplicação em execução, a documentação interativa dos endpoints está disponível em:
+
+http://localhost:8080/swagger-ui/index.html
+
+O Swagger permite consultar os endpoints, os parâmetros e os modelos de requisição e resposta da API.
 
 ## Testes da API
 
