@@ -10,7 +10,7 @@ public class AuthResponse {
 	private Role role;
 	private String token;
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}

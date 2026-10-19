@@ -17,7 +17,7 @@ public class PedidoResponse {
 	private Integer unidadeId;
 	private List<ItemPedidoResponse> itens;
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}

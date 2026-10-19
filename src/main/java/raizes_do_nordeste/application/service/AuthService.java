@@ -17,7 +17,7 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
 	
-	//construtor
+	//CONSTRUTOR
 	public AuthService(
 			UsuarioRepository usuarioRepository, 
 			PasswordEncoder passwordEncoder, 
@@ -28,7 +28,7 @@ public class AuthService {
 		this.jwtService = jwtService;
 		
 	}
-	//métodos
+	//MÉTODOS
 	public AuthResponse autenticar(AuthRequest authRequest) {
 		
 		Usuario usuario = usuarioRepository

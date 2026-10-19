@@ -38,11 +38,11 @@ public class Pedido {
 	@OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemPedido> itens = new ArrayList<>();
 	
-	//construtor
+	//CONSTRUTOR
 	public Pedido() {
 	}
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}
@@ -100,7 +100,7 @@ public class Pedido {
 		this.pagamento = pagamento;
 	}
 
-	//Métodos
+	//MÉTODOS
 	public void adicionarItem(ItemPedido item) {
 		itens.add(item);
 		item.setPedido(this);

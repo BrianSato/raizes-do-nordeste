@@ -6,7 +6,7 @@ public class UnidadeResponse {
 	private String nome;
 	private String endereco;
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}

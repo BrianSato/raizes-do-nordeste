@@ -23,11 +23,11 @@ public class Fidelizacao {
 	@OneToMany(mappedBy = "fidelizacao")
 	private List<MovimentacaoFidelidade> movimentacoes = new ArrayList<>();
 	
-	//construtor
+	//CONSTRUTOR
 	public Fidelizacao() {
 	}
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}
@@ -60,7 +60,7 @@ public class Fidelizacao {
 		this.usuario = usuario;
 	}
 
-	//métodos
+	//MÉTODOS
 	public void adicionarPontos(Integer pontos) {
 		
 		if(pontos <= 0) {

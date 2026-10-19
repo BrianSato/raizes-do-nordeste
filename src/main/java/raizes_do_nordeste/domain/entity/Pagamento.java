@@ -25,11 +25,11 @@ public class Pagamento {
 	@OneToOne
 	private Pedido pedido;
 	
-	//contrutor
+	//CONSTRUTOR
 	public Pagamento() {
 	}
 
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}

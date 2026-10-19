@@ -9,7 +9,7 @@ public class ErroResponse {
 	private String erro;
 	private String mensagem;
 	
-	//construtor
+	//CONSTRUTOR
 	public ErroResponse(){	
 	}
 
@@ -25,7 +25,7 @@ public class ErroResponse {
 		this.mensagem = mensagem;
 	}
 
-	//getters e setters
+	//GETTERS E SETTERS
 	public LocalDateTime getTimestamp() {
 		return timestamp;
 	}

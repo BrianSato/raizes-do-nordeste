@@ -15,7 +15,7 @@ public class FidelizacaoService {
 	private final UsuarioRepository usuarioRepository;
 	private final FidelizacaoRepository fidelizacaoRepository;
 
-	//construtor
+	//CONSTRUTOR
 	public FidelizacaoService(
 			
 			UsuarioRepository usuarioRepository, 
@@ -26,7 +26,7 @@ public class FidelizacaoService {
 		
 	}
 	
-	//métodos
+	//MÉTODOS
 	public FidelizacaoResponse buscarPorId(Integer id) {
 
 		Fidelizacao fidelizacao = fidelizacaoRepository

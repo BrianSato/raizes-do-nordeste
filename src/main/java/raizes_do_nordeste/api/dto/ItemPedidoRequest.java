@@ -11,7 +11,7 @@ public class ItemPedidoRequest {
 	@Min(value = 1, message = "A quantidade deve ser maior que zero")
 	private Integer quantidade;
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getProdutoId() {
 		return produtoId;
 	}

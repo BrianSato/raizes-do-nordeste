@@ -19,7 +19,7 @@ public class PedidoRequest {
 	@Valid
 	private List<ItemPedidoRequest> itens;
 
-	//getters e setterss
+	//GETTERS E SETTERS
 	public List<ItemPedidoRequest> getItens() {
 		return itens;
 	}

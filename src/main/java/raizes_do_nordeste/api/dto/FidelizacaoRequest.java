@@ -5,7 +5,7 @@ public class FidelizacaoRequest {
 	private Integer usuarioId;
 	private boolean consentimento;
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getUsuarioId() {
 		return usuarioId;
 	}

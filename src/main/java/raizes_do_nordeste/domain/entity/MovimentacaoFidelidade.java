@@ -20,11 +20,11 @@ public class MovimentacaoFidelidade {
 	@ManyToOne
 	private Fidelizacao fidelizacao;
 	
-	//contrutor
+	//CONSTRUTOR
 	public MovimentacaoFidelidade() {
 	}
 
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}

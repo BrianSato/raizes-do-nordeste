@@ -9,7 +9,7 @@ public class ProdutoResponse {
 	private Double preco;
 	private LocalDate validade;
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}

@@ -33,7 +33,7 @@ public class PedidoService {
 	private final UnidadeRepository unidadeRepository;
 	private final EstoqueProdutoRepository estoqueProdutoRepository;
 	
-	//construtor
+	//CONSTRUTOR
 	public PedidoService(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository,
 			UsuarioRepository usuarioRepository, UnidadeRepository unidadeRepository,
 			EstoqueProdutoRepository estoqueProdutoRepository) {
@@ -45,7 +45,7 @@ public class PedidoService {
 		this.estoqueProdutoRepository = estoqueProdutoRepository;
 	}
 	
-	//métodos
+	//MÉTODOS
 	public PedidoResponse buscarPorId(Integer id) {
 		
 		Pedido pedido = pedidoRepository

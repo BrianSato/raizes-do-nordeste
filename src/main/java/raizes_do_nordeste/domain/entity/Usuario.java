@@ -29,11 +29,11 @@ public class Usuario {
 	@OneToOne(mappedBy = "usuario")
 	private Fidelizacao fidelizacao;
 	
-	//contrutor
+	//CONSTRUTOR
 	public Usuario() {
 	}
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}

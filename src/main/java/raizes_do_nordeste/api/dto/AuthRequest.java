@@ -5,12 +5,12 @@ public class AuthRequest {
 	private String email;
 	private String senha;
 	
-	//construtor
+	//CONSTRUTOR
 	public AuthRequest(String email, String senha) {
 		this.email = email;
 		this.senha = senha;
 	}
-	//getters e setters
+	//GETTERS E SETTERS
 	public String getEmail() {
 		return email;
 	}

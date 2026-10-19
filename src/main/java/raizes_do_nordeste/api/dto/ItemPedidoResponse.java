@@ -6,7 +6,7 @@ public class ItemPedidoResponse {
 	private Integer quantidade;
 	private Double precoUnitario;
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getProdutoId() {
 		return produtoId;
 	}

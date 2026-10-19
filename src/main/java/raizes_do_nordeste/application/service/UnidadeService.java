@@ -11,12 +11,12 @@ public class UnidadeService {
 
 	private final UnidadeRepository unidadeRepository;
 	
-	//contrutor
+	//CONSTRUTOR
 	public UnidadeService(UnidadeRepository unidadeRepository) {
 		this.unidadeRepository = unidadeRepository;
 	}
 	
-	//métodos
+	//MÉTODOS
 	public UnidadeResponse buscarPorId(Integer id) {
 		
 		Unidade unidade = unidadeRepository

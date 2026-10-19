@@ -13,7 +13,7 @@ public class PagamentoRequest {
 	@NotNull(message = "O campo aprovado é obrigatório")
 	private Boolean aprovado;
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getPedidoId() {
 		return pedidoId;
 	}

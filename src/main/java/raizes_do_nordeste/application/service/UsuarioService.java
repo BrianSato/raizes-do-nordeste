@@ -11,12 +11,12 @@ public class UsuarioService {
 
 	private final UsuarioRepository usuarioRepository;
 
-	//construtor
+	//CONSTRUTOR
 	public UsuarioService(UsuarioRepository usuarioRepository) {
 		this.usuarioRepository = usuarioRepository;
 	}
 	
-	//métodos
+	//MÉTODOS
 	public UsuarioResponse buscarPorId(Integer id) {
 		
 		Usuario usuario = usuarioRepository

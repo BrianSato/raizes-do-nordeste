@@ -13,7 +13,7 @@ public class PagamentoResponse {
 	private StatusPagamento status;
 	private LocalDateTime dataHora;
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}

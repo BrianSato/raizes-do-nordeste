@@ -18,7 +18,7 @@
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "const resposta = pm.response.json();\r\npm.environment.set(\"token\",resposta.token);"
+                  "pm.test(\"T01 - Login deve retornar HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\nconst resposta = pm.response.json();\r\npm.environment.set(\"token\", resposta.token);"
                 ]
               }
             }
@@ -49,6 +49,17 @@
         },
         {
           "name": "T02 - Acesso sem token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T02 - Acesso sem token deve retornar HTTP 401\", function () {\r\n    pm.response.to.have.status(401);\r\n});\r\n\r\npm.test(\"T02 - Deve retornar erro NAO_AUTENTICADO\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.erro).to.eql(\"NAO_AUTENTICADO\");\r\n});"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "GET",
             "header": [],
@@ -67,6 +78,17 @@
         },
         {
           "name": "T03 - Perfil sem permissão",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T03 - Perfil sem permissão deve retornar HTTP 403\", function () {\r\n    pm.response.to.have.status(403);\r\n});\r\n\r\npm.test(\"T03 - Deve retornar erro SEM_PERMISSAO\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.erro).to.eql(\"SEM_PERMISSAO\");\r\n});"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -78,16 +100,17 @@
                 }
               ]
             },
-            "method": "GET",
+            "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/estoque/1",
+              "raw": "{{baseUrl}}/fidelidade/1/pontos",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
-                "estoque",
-                "1"
+                "fidelidade",
+                "1",
+                "pontos"
               ]
             }
           },
@@ -100,6 +123,17 @@
       "item": [
         {
           "name": "T06 - Produto inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T06 - Produto inexistente deve retornar HTTP 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"T06 - Deve retornar erro RECURSO_NAO_ENCONTRADO\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.erro).to.eql(\"RECURSO_NAO_ENCONTRADO\");\r\n});"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -141,6 +175,17 @@
       "item": [
         {
           "name": "T09.1 - Criar pedido para pagamento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T09.1 - Pedido deve ser criado com HTTP 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\nconst resposta = pm.response.json();\r\n\r\npm.test(\"T09.1 - Pedido deve aguardar pagamento\", function () {\r\n    pm.expect(resposta.status).to.eql(\"AGUARDANDO_PAGAMENTO\");\r\n});\r\n\r\nif (pm.response.code === 201 && resposta.id) {\r\n    pm.environment.set(\"pedidoIdAprovacao\", resposta.id);\r\n}"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -177,6 +222,17 @@
         },
         {
           "name": "T09.3 - Confirmar status do pedido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T09.3 - Consulta do pedido deve retornar HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"T09.3 - Pedido deve estar com pagamento aprovado\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.status).to.eql(\"PAGAMENTO_APROVADO\");\r\n});\r\n\r\npm.test(\"T09.3 - Deve consultar o pedido correto\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.id).to.eql(\r\n        Number(pm.environment.get(\"pedidoIdAprovacao\"))\r\n    );\r\n});"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -191,13 +247,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/pedidos/7",
+              "raw": "{{baseUrl}}/pedidos/{{pedidoIdAprovacao}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "pedidos",
-                "7"
+                "{{pedidoIdAprovacao}}"
               ]
             }
           },
@@ -205,6 +261,17 @@
         },
         {
           "name": "T10.1 - Criar pedido para pagamento recusado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T10.1 - Pedido deve ser criado com HTTP 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});\r\n\r\npm.test(\"T10.1 - Pedido deve aguardar pagamento\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.status).to.eql(\"AGUARDANDO_PAGAMENTO\");\r\n});\r\n\r\nif (pm.response.code === 201) {\r\n    const resposta = pm.response.json();\r\n    pm.environment.set(\"pedidoIdRecusado\", resposta.id);\r\n}\r\n"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -241,6 +308,17 @@
         },
         {
           "name": "T10.3 - Confirmar status após pagamento recusado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T10.3 - Consulta do pedido deve retornar HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"T10.3 - Pedido deve continuar aguardando pagamento\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.status).to.eql(\"AGUARDANDO_PAGAMENTO\");\r\n});\r\n\r\npm.test(\"T10.3 - Deve consultar o pedido correto\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.id).to.eql(\r\n        Number(pm.environment.get(\"pedidoIdRecusado\"))\r\n    );\r\n});"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -255,13 +333,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/pedidos/8",
+              "raw": "{{baseUrl}}/pedidos/{{pedidoIdRecusado}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "pedidos",
-                "8"
+                "{{pedidoIdRecusado}}"
               ]
             }
           },
@@ -274,6 +352,17 @@
       "item": [
         {
           "name": "T09.2 - Pagamento aprovado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T09.2 - Pagamento aprovado deve retornar HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"T09.2 - Pagamento deve estar APROVADO\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.status).to.eql(\"APROVADO\");\r\n});\r\n\r\npm.test(\"T09.2 - Pagamento deve pertencer ao pedido criado\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.pedidoId).to.eql(\r\n        Number(pm.environment.get(\"pedidoIdAprovacao\"))\r\n    );\r\n});"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -289,7 +378,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"pedidoId\": 7,\r\n    \"formaPagamento\": \"PIX\"\r\n}",
+              "raw": "{\r\n    \"pedidoId\": {{pedidoIdAprovacao}},\r\n    \"formaPagamento\": \"MOCK\",\r\n    \"aprovado\": true\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -310,6 +399,17 @@
         },
         {
           "name": "T10.2 - Pagamento recusado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T10.2 - Pagamento recusado deve retornar HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"T10.2 - Pagamento deve estar RECUSADO\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.status).to.eql(\"RECUSADO\");\r\n});\r\n\r\npm.test(\"T10.2 - Pagamento deve pertencer ao pedido correto\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.pedidoId).to.eql(\r\n        Number(pm.environment.get(\"pedidoIdRecusado\"))\r\n    );\r\n});"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -325,7 +425,54 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"pedidoId\": 8,\r\n    \"formaPagamento\": \"PIX\",\r\n    \"aprovado\": false\r\n}",
+              "raw": "{\r\n    \"pedidoId\": {{pedidoIdRecusado}},\r\n    \"formaPagamento\": \"PIX\",\r\n    \"aprovado\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pagamentos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pagamentos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T09.1.1 - Pagamento sem campo aprovado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T09.1.1 - Pagamento sem campo aprovado deve retornar HTTP 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"T09.1.1 - Deve retornar erro de validação\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.erro).to.eql(\"VALIDACAO\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"pedidoId\": {{pedidoIdAprovacao}},\r\n  \"formaPagamento\": \"MOCK\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -351,6 +498,17 @@
       "item": [
         {
           "name": "T04 - Campo obrigatótio ausente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T04 - Campo obrigatório ausente deve retornar HTTP 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"T04 - Deve retornar erro de validação\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.erro).to.eql(\"VALIDACAO\");\r\n});"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -387,6 +545,17 @@
         },
         {
           "name": "T05 - Quantidade negativa",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T05 - Quantidade negativa deve retornar HTTP 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});\r\n\r\npm.test(\"T05 - Deve retornar erro de validação\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.erro).to.eql(\"VALIDACAO\");\r\n});"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -423,6 +592,17 @@
         },
         {
           "name": "T07 - Unidade inexistente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T07 - Unidade inexistente deve retornar HTTP 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\npm.test(\"T07 - Deve retornar erro RECURSO_NAO_ENCONTRADO\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.erro).to.eql(\"RECURSO_NAO_ENCONTRADO\");\r\n});"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -459,6 +639,17 @@
         },
         {
           "name": "T08 - Estoque insuficiente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T08 - Estoque insuficiente deve retornar HTTP 409\", function () {\r\n    pm.response.to.have.status(409);\r\n});\r\n\r\npm.test(\"T08 - Deve retornar erro REGRA_DE_NEGOCIO\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.erro).to.eql(\"REGRA_DE_NEGOCIO\");\r\n});"
+                ]
+              }
+            }
+          ],
           "request": {
             "auth": {
               "type": "bearer",
@@ -474,7 +665,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"canalPedido\": \"TOTEM\",\r\n    \"usuarioId\": 1,\r\n    \"unidadeId\": 1,\r\n    \"itens\": [\r\n        {\r\n            \"produtoId\": 1,\r\n            \"quantidade\": 3\r\n        }\r\n    ]\r\n}",
+              "raw": "{\r\n    \"canalPedido\": \"TOTEM\",\r\n    \"usuarioId\": 1,\r\n    \"unidadeId\": 1,\r\n    \"itens\": [\r\n        {\r\n            \"produtoId\": 1,\r\n            \"quantidade\": {{quantidadeEstoqueInsuficiente}}\r\n        }\r\n    ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"

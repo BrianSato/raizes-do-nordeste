@@ -18,11 +18,11 @@ public class EstoqueProduto {
 	@ManyToOne
 	private Unidade unidade;
 	
-	//contrutor
+	//CONSTRUTOR
 	public EstoqueProduto() {
 	}
 	
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}
@@ -55,7 +55,7 @@ public class EstoqueProduto {
 		this.unidade = unidade;
 	}
 
-	//métodos
+	//MÉTODOS
 	public void adicionarQuantidade(Integer quantidadeAdicionar) {
 		if(quantidadeAdicionar <=0) {
 			throw new IllegalArgumentException("A quantidade adicionada deve ser maior que 0");

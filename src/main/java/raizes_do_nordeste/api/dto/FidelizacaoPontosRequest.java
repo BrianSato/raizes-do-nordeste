@@ -4,12 +4,12 @@ public class FidelizacaoPontosRequest {
 
 	private Integer pontos;
 
-	//construtor
+	//CONSTRUTOR
 	public FidelizacaoPontosRequest(Integer pontos) {
 		this.pontos = pontos;
 	}
 
-	//getters e setters
+	//GETTER
 	public Integer getPontos() {
 		return pontos;
 	}

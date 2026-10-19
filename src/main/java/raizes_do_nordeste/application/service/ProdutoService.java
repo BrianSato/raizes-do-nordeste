@@ -13,12 +13,12 @@ public class ProdutoService {
 
 	private final ProdutoRepository produtoRepository;
 	
-	//copntrutor
+	//CONSTRUTOR
 	public ProdutoService(ProdutoRepository produtoRepository) {
 		this.produtoRepository = produtoRepository;
 	}
 	
-	//métodos
+	//MÉTODOS
 	public ProdutoResponse buscarPorId(Integer id) {
 		
 		Produto produto = produtoRepository

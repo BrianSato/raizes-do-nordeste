@@ -27,7 +27,7 @@ public class PagamentoService {
 	private final EstoqueProdutoRepository estoqueProdutoRepository;
 	private final FidelizacaoRepository fidelizacaoRepository;
 
-	//construtor
+	//CONSTRUTOR
 	public PagamentoService(
 			PagamentoRepository pagamentoRepository,
 			PedidoRepository pedidoRepository,
@@ -39,7 +39,7 @@ public class PagamentoService {
 		this.fidelizacaoRepository = fidelizacaoRepository;
 	}
 	
-	//métodos
+	//MÉTODOS
 	public PagamentoResponse buscarPorId(Integer id) {
 		
 		Pagamento pagamento = pagamentoRepository

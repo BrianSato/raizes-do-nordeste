@@ -19,12 +19,12 @@ public class ItemPedido {
 	@ManyToOne
 	private Produto produto;
 	
-	//contrutor
+	//CONSTRUTOR
 	public ItemPedido() {
 		super();
 	}
 
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}
@@ -65,7 +65,7 @@ public class ItemPedido {
 		this.produto = produto;
 	}
 
-	//Métodos
+	//MÉTODOS
 	public double calcularSubtotal() {
 		if (quantidade <= 0) {
 		    throw new IllegalArgumentException("A quantidade deve ser maior que zero.");

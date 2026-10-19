@@ -10,7 +10,7 @@ public class UsuarioResponse {
 	private String email;
 	private Role role;
 
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}

@@ -24,11 +24,11 @@ public class Produto {
 	@OneToMany(mappedBy = "produto")
 	private List<EstoqueProduto> estoques = new ArrayList<>();
 	
-	//contrutor
+	//CONSTRUTOR
 	public Produto() {
 	}
 
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}

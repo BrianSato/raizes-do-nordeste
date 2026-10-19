@@ -20,11 +20,11 @@ public class Unidade {
 	@OneToMany(mappedBy = "unidade")
 	private List<EstoqueProduto> estoques = new ArrayList<>();
 
-	//contrutor
+	//CONSTRUTOR
 	public Unidade() {
 	}
 
-	//getters e setters
+	//GETTERS E SETTERS
 	public Integer getId() {
 		return id;
 	}
