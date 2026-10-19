@@ -103,6 +103,33 @@ O arquivo `application.properties` utiliza essas variáveis para obter as config
 
 **Importante:** não publique senhas, chaves secretas ou tokens reais no repositório.
 
+### Dados iniciais para testes
+
+O projeto possui um script SQL com os dados necessários para executar os testes da API.
+
+Arquivo: `database/dados_iniciais.sql`
+
+Para utilizar:
+
+1. Crie o banco de dados `raizes_nordeste` no MySQL.
+2. Configure as variáveis de ambiente de conexão com o banco.
+3. Execute a aplicação Spring Boot para que o Hibernate crie as tabelas.
+4. Abra o arquivo `database/dados_iniciais.sql` no MySQL Workbench.
+5. Execute o script para cadastrar os dados iniciais.
+
+O script inclui:
+- Um usuário de teste com perfil CLIENTE.
+- Uma unidade.
+- Um produto.
+- O estoque inicial do produto.
+
+**Credenciais de teste:**
+
+- E-mail: `teste@teste.com`
+- Senha: `123456`
+
+Essas credenciais são fictícias e destinadas exclusivamente ao ambiente de desenvolvimento e testes.
+
 ### Executando a aplicação
 
 Na raiz do projeto, execute:
