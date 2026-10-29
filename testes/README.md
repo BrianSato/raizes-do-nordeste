@@ -176,6 +176,27 @@ Authorization: Bearer {{token}}
 
 > **Importante:** não é necessário copiar manualmente o JWT para os demais testes. O token é obtido automaticamente pelo T01.
 
+### Importação e execução da coleção
+
+1. Abra o Postman.
+2. Clique em **Import** e selecione o arquivo
+   `testes/Postman/Raizes-do-Nordeste.postman_collection.json`.
+3. Verifique se a aplicação Spring Boot está em execução
+   em `http://localhost:8080`.
+4. Confira se a variável `baseUrl` está configurada como
+   `http://localhost:8080` e se a variável `token` está vazia.
+5. Abra a coleção importada e selecione **Run** para acessar
+   o Collection Runner.
+6. Confira a ordem das requisições conforme a seção 7
+   deste documento.
+7. Execute a coleção e verifique os resultados dos testes
+   apresentados pelo Postman.
+
+**Observação:** os testes dependem dos dados iniciais
+descritos na seção 5. Antes de executar novamente a coleção,
+verifique o estoque disponível, pois pagamentos aprovados
+consomem unidades dos produtos.
+
 ---
 
 ## 7. Ordem recomendada para execução
