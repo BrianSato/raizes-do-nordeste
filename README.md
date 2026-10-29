@@ -79,7 +79,7 @@ Essa organização busca separar as responsabilidades, facilitar a manutenção 
 
 ### Pré-requisitos
 
-- JDK compatível com a versão configurada no projeto.
+- JDK 17 ou superior, compatível com o Spring Boot 4.1.1.
 - Maven.
 - MySQL.
 - Uma ferramenta para realizar requisições HTTP, como o Postman.
