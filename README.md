@@ -99,6 +99,13 @@ Essa organização busca separar as responsabilidades, facilitar a manutenção 
 
 As variáveis podem ser configuradas no sistema operacional ou nas configurações de execução da IDE, como a aba **Environment** do Eclipse.
 
+O arquivo `.env.example`, disponível na raiz do projeto, apresenta um
+modelo das variáveis de ambiente necessárias. Os valores são ilustrativos
+e devem ser substituídos pelas configurações do ambiente local.
+
+O Spring Boot não carrega automaticamente esse arquivo. As variáveis
+devem ser configuradas no sistema operacional ou na IDE.
+
 O arquivo `application.properties` utiliza essas variáveis para obter as configurações necessárias, sem armazenar credenciais no código-fonte.
 
 **Importante:** não publique senhas, chaves secretas ou tokens reais no repositório.
