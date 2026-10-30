@@ -33,13 +33,13 @@ public class AuthService {
 		
 		Usuario usuario = usuarioRepository
 				.findByEmail(authRequest.getEmail())
-				.orElseThrow();
+				.orElseThrow(() -> new AutenticacaoException("Credenciais inválidas."));
 		
 		if(!passwordEncoder.matches(
 				authRequest.getSenha(),
 				usuario.getSenha())) {
 			
-			throw new AutenticacaoException("Senha inválida.");
+			throw new AutenticacaoException("Credenciais inválidas.");
 		}
 		
 		String token = jwtService.gerarToken(

@@ -137,6 +137,20 @@ public class PedidoController {
 		        content = @Content(
 		            schema = @Schema(implementation = ErroResponse.class)
 		        )
+		    ),
+		    @ApiResponse(
+		    	responseCode = "404",
+		    	description = "Produto ou unidade não encontrado",
+		    	content = @Content(
+		    	    schema = @Schema(implementation = ErroResponse.class)
+		    	)
+		    ),
+		    @ApiResponse(
+		    	responseCode = "409",
+		    	description = "Estoque insuficiente para atender ao pedido",
+		    	content = @Content(
+		    	    schema = @Schema(implementation = ErroResponse.class)
+		    	)
 		    )
 		})
 	@PostMapping

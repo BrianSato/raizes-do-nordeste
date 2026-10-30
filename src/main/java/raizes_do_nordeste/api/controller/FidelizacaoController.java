@@ -31,7 +31,7 @@ public class FidelizacaoController {
 	}
 	
 	//MÉTODOS
-	//Consulta de pedidos por ID
+	//Consulta de fidelização por ID
 	@ApiResponses(value = {
 		    @ApiResponse(
 		        responseCode = "200",
@@ -66,7 +66,7 @@ public class FidelizacaoController {
 	public FidelizacaoResponse buscarPorId(@PathVariable Integer id) {
 		return fidelizacaoService.buscarPorId(id);
 	}
-	//Criação de pedidos
+	//Criação de fidelização
 	@ApiResponses(value = {
 		    @ApiResponse(
 		        responseCode = "200",

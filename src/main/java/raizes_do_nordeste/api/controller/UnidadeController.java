@@ -26,7 +26,7 @@ public class UnidadeController {
 	
 	//MÉTODO
 	
-	//Consulta de pedidos por ID
+	//Consulta de unidade por ID
 	@ApiResponses(value = {
 		    @ApiResponse(
 		        responseCode = "200",

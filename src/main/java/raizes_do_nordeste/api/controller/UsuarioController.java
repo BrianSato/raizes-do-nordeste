@@ -28,7 +28,7 @@ public class UsuarioController {
 	
 	//MÉTODO
 	
-	//Consulta de pedidos por ID
+	//Consulta de usuário por ID
 	@ApiResponses(value = {
 		    @ApiResponse(
 		        responseCode = "200",
