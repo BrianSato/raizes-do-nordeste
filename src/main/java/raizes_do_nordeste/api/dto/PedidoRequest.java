@@ -11,7 +11,7 @@ public class PedidoRequest {
 	
 	@NotNull(message = "canalPedido é obrigatório")
 	private CanalPedido canalPedido;
-	@NotNull(message = "usuaraioId é obrigatório")
+	@NotNull(message = "usuarioId é obrigatório")
 	private Integer usuarioId;
 	@NotNull(message = "unidadeId é obrigatório")
 	private Integer unidadeId;

@@ -61,7 +61,8 @@ public class GlobalExceptionHandler {
 				LocalDateTime.now(),
 				HttpStatus.NOT_FOUND.value(),
 				"RECURSO_NAO_ENCONTRADO",
-				"Recurso não encontrado"
+				exception.getMessage() != null
+				? exception.getMessage(): "Recurso não encontrado"
 		);
 		
 		return ResponseEntity

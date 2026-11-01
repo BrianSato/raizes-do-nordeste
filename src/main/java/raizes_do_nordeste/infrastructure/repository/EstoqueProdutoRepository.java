@@ -1,5 +1,6 @@
 package raizes_do_nordeste.infrastructure.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,6 @@ public interface EstoqueProdutoRepository extends JpaRepository<EstoqueProduto, 
 			Produto produto,
 			Unidade unidade
 	);
+	
+	List<EstoqueProduto> findByUnidade(Unidade unidade);
 }
