@@ -125,10 +125,13 @@ Para utilizar:
 5. Execute o script para cadastrar os dados iniciais.
 
 O script inclui:
+
 - Um usuário de teste com perfil CLIENTE.
-- Uma unidade.
-- Um produto.
-- O estoque inicial do produto.
+- Duas unidades cadastradas.
+- Dois produtos cadastrados: Coxinha de Frango e Pastel de Carne.
+- Estoque inicial de 10 unidades da Coxinha de Frango na Unidade Centro.
+- Estoque zerado do Pastel de Carne na Unidade Centro.
+- Uma segunda unidade sem produtos cadastrados em estoque, utilizada nos testes de cardápio vazio.
 
 **Credenciais de teste:**
 
