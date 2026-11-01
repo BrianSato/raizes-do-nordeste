@@ -84,22 +84,19 @@ A aplicação deve permanecer em execução durante os testes realizados pelo Po
 
 Os testes foram realizados utilizando dados previamente cadastrados no banco de dados.
 
-### Produto
+### Produtos
 
-| Campo    | Valor             |
-| -------- | ----------------- |
-| ID       | 1                 |
-| Nome     | Coxinha de Frango |
-| Preço    | R$ 8,50           |
-| Validade | 31/12/2026        |
+| ID | Nome | Preço | Validade |
+|---|---|---|---|
+| 1 | Coxinha de Frango | R$ 8,50 | 31/12/2026 |
+| 2 | Pastel de Carne | R$ 9,00 | 31/12/2026 |
 
-### Unidade
+### Unidades
 
-| Campo    | Valor              |
-| -------- | ------------------ |
-| ID       | 1                  |
-| Nome     | Unidade Centro     |
-| Endereço | Rua Principal, 100 |
+| ID | Nome | Endereço |
+|---|---|---|
+| 1 | Unidade Centro | Rua Principal, 100 |
+| 2 | Raizes do Nordeste - Unidade 2 | Av. Paulista, 1000 - São Paulo |
 
 ### Usuário
 
@@ -115,9 +112,12 @@ O usuário possui perfil adequado para a execução dos testes de pedidos e paga
 
 O registro de estoque utilizado nos testes corresponde ao produto `1` na unidade `1`. A quantidade disponível pode variar conforme a execução dos testes de pagamento aprovado, que consomem estoque.
 
+
 | Produto | Unidade | Quantidade de referência |
 |---|---|---:|
 | Coxinha de Frango | Unidade Centro | 10 |
+| Pastel de Carne | Unidade Centro | 0 |
+
 
 Antes de executar a sequência completa, confira a quantidade atual no banco de dados. Se necessário, restaure o estoque para 10 unidades com a seguinte instrução SQL:
 
@@ -203,34 +203,36 @@ consomem unidades dos produtos.
 
 Para reproduzir os testes, recomenda-se executar as requisições na seguinte ordem:
 
-### Autenticação
+1. **Autenticação**
+   - T01 — Login válido
+   - T02 — Acesso sem token
+   - T03 — Perfil sem permissão
 
-1. **T01 - Login válido**
-2. **T02 - Acesso sem token**
-3. **T03 - Perfil sem permissão**
+2. **Produtos**
+   - T06 — Produto inexistente
+   - T11 — Cardápio com produtos disponíveis
+   - T12 — Cardápio de unidade sem produtos
+   - T13 — Cardápio de unidade inexistente
 
-### Validações e erros
+3. **Fluxos de Pedido e Pagamento**
+   - T09.1 — Criar pedido para pagamento
+   - T09.1.1 — Pagamento sem campo aprovado
+   - T09.2 — Pagamento aprovado
+   - T09.3 — Confirmar status do pedido
+   - T10.1 — Criar pedido para pagamento recusado
+   - T10.2 — Pagamento recusado
+   - T10.3 — Confirmar status após pagamento recusado
 
-4. **T04 - Campo obrigatório ausente**
-5. **T05 - Quantidade negativa**
-6. **T06 - Produto inexistente**
-7. **T07 - Unidade inexistente**
-8. **T08 - Estoque insuficiente**
-
-### Pagamento aprovado
-
-9. **T09.1 - Criar pedido para pagamento**
-10. **T09.1.1 - Pagamento sem campo aprovado**
-11. **T09.2 - Pagamento aprovado**
-12. **T09.3 - Confirmar status do pedido**
-
-### Pagamento recusado
-
-13. **T10.1 - Criar pedido para pagamento recusado**
-14. **T10.2 - Pagamento recusado**
-15. **T10.3 - Confirmar status após pagamento recusado**
+4. **Erros**
+   - T04 — Campo obrigatório ausente
+   - T05 — Quantidade negativa
+   - T07 — Unidade inexistente
+   - T08 — Estoque insuficiente
 
 Os testes T09 e T10 possuem mais de uma requisição porque representam fluxos completos, nos quais o resultado de uma etapa é utilizado na etapa seguinte.
+
+---
+
 ## 8. Cenários de teste
 
 Os cenários abaixo foram executados utilizando a coleção Postman disponibilizada no diretório `testes/Postman`.
@@ -385,7 +387,7 @@ O cenário T09 representa o fluxo principal com pagamento aprovado.
 
 **Resultado esperado:** `201 Created`, com o pedido criado e status inicial `AGUARDANDO_PAGAMENTO`.
 
-**Evidência:** requisição `T09.1 - Criar pedido para pagamento` na pasta `Pedidos`.
+**Evidência:** requisição `T09.1 - Criar pedido para pagamento` na pasta `Fluxos de Pedido e Pagamento`.
 
 #### T09.1.1 — Validar pagamento sem o campo `aprovado`
 
@@ -397,7 +399,7 @@ O cenário T09 representa o fluxo principal com pagamento aprovado.
 
 **Resultado esperado:** `400 Bad Request`, devido à ausência do campo obrigatório `aprovado`.
 
-**Evidência:** requisição de teste de validação no Postman, demonstrando o retorno `400 Bad Request`.
+**Evidência:** requisição `T09.1.1 - Pagamento sem campo aprovado` na pasta `Fluxos de Pedido e Pagamento`.
 
 #### T09.2 — Pagamento aprovado
 
@@ -409,7 +411,7 @@ O cenário T09 representa o fluxo principal com pagamento aprovado.
 
 **Resultado esperado:** `200 OK`, pagamento com status `APROVADO`.
 
-**Evidência:** requisição `T09.2 - Pagamento aprovado` na pasta `Pagamento`.
+**Evidência:** requisição `T09.2 - Pagamento aprovado` na pasta `Fluxos de Pedido e Pagamento`.
 
 #### T09.3 — Confirmar status do pedido
 
@@ -421,7 +423,7 @@ O cenário T09 representa o fluxo principal com pagamento aprovado.
 
 **Resultado esperado:** `200 OK`, com o pedido apresentando status `PAGAMENTO_APROVADO`.
 
-**Evidência:** requisição `T09.3 - Confirmar status do pedido` na pasta `Pedidos`.
+**Evidência:** requisição `T09.3 - Confirmar status do pedido` na pasta `Fluxos de Pedido e Pagamento`.
 
 ---
 
@@ -439,7 +441,7 @@ O cenário T10 representa o comportamento da API quando o pagamento mock é recu
 
 **Resultado esperado:** `201 Created`, com status inicial `AGUARDANDO_PAGAMENTO`.
 
-**Evidência:** requisição `T10.1 - Criar pedido para pagamento recusado` na pasta `Pedidos`.
+**Evidência:** requisição `T10.1 - Criar pedido para pagamento recusado` na pasta `Fluxos de Pedido e Pagamento`.
 
 #### T10.2 — Pagamento recusado
 
@@ -451,7 +453,7 @@ O cenário T10 representa o comportamento da API quando o pagamento mock é recu
 
 **Resultado esperado:** `200 OK`, pagamento com status `RECUSADO`.
 
-**Evidência:** requisição `T10.2 - Pagamento recusado` na pasta `Pagamento`.
+**Evidência:** requisição `T10.2 - Pagamento recusado` na pasta `Fluxos de Pedido e Pagamento`.
 
 #### T10.3 — Confirmar status após pagamento recusado
 
@@ -463,7 +465,59 @@ O cenário T10 representa o comportamento da API quando o pagamento mock é recu
 
 **Resultado esperado:** `200 OK`, mantendo o pedido no status `AGUARDANDO_PAGAMENTO`.
 
-**Evidência:** requisição `T10.3 - Confirmar status após pagamento recusado` na pasta `Pedidos`.
+**Evidência:** requisição `T10.3 - Confirmar status após pagamento recusado` na pasta `Fluxos de Pedido e Pagamento`.
+
+---
+
+### T11 — Cardápio com produtos disponíveis
+
+**Endpoint:** `GET /unidades/1/cardapio`
+
+**Pré-condição:** unidade 1 cadastrada, com a Coxinha de Frango disponível em estoque e o Pastel de Carne com quantidade zero.
+
+**Entrada:** ID da unidade (`1`).
+
+**Resultado esperado:** `200 OK`, retornando uma lista de produtos disponíveis para a unidade.
+
+O retorno deve conter pelo menos um produto e não deve incluir o Pastel de Carne (`produtoId = 2`), pois seu estoque está zerado.
+
+**Evidência:** requisição `T11 - Cardápio com produtos disponíveis` na pasta `Produtos` do Postman.
+
+---
+
+### T12 — Cardápio de unidade sem produtos
+
+**Endpoint:** `GET /unidades/2/cardapio`
+
+**Pré-condição:** unidade 2 cadastrada no banco de dados, sem produtos disponíveis em seu estoque.
+
+**Entrada:** ID da unidade (`2`).
+
+**Resultado esperado:** `200 OK`, retornando uma lista vazia (`[]`).
+
+Esse cenário verifica que uma unidade existente, mas sem produtos disponíveis, deve retornar um cardápio vazio, sem gerar erro.
+
+**Evidência:** requisição `T12 - Cardápio de unidade sem produtos` na pasta `Produtos` do Postman.
+
+---
+
+### T13 — Cardápio de unidade inexistente
+
+**Endpoint:** `GET /unidades/9999/cardapio`
+
+**Pré-condição:** usuário autenticado e unidade com ID `9999` inexistente no banco de dados.
+
+**Entrada:** ID de uma unidade inexistente (`9999`).
+
+**Resultado esperado:** `404 Not Found`, com a mensagem:
+
+```text
+Unidade não encontrada
+```
+
+Esse cenário verifica se a API identifica corretamente uma unidade inexistente e retorna uma resposta de erro apropriada.
+
+**Evidência:** requisição `T13 - Cardápio de unidade inexistente` na pasta `Produtos` do Postman.
 
 ---
 
@@ -486,6 +540,9 @@ O cenário T10 representa o comportamento da API quando o pagamento mock é recu
 | T10.1 | Positivo | POST   | `/pedidos`                | 201                |
 | T10.2 | Positivo | POST   | `/pagamentos`             | 200                |
 | T10.3 | Positivo | GET    | `/pedidos/{id}`           | 200                |
+| T11 | Positivo | GET | `/unidades/1/cardapio` | 200 |
+| T12 | Positivo | GET | `/unidades/2/cardapio` | 200 |
+| T13 | Negativo | GET | `/unidades/9999/cardapio` | 404 |
 
 ## 10. Padrão de respostas de erro
 
@@ -576,8 +633,7 @@ As requisições estão organizadas nas seguintes pastas:
 ```text
 Auth
 Produtos
-Pedidos
-Pagamento
+Fluxos de Pedido e Pagamento
 Erros
 ```
 
