@@ -1,5 +1,9 @@
 package raizes_do_nordeste.application.service;
 
+import org.springframework.security.access.AccessDeniedException;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import raizes_do_nordeste.api.dto.UsuarioResponse;
@@ -19,9 +23,31 @@ public class UsuarioService {
 	//MÉTODOS
 	public UsuarioResponse buscarPorId(Integer id) {
 		
+		String emailAutenticado = SecurityContextHolder
+				.getContext()
+				.getAuthentication()
+				.getName();
+		
 		Usuario usuario = usuarioRepository
 				.findById(id)
 				.orElseThrow();
+		
+		boolean proprioUsuario = emailAutenticado.equals(usuario.getEmail());
+		
+		Authentication authentication = SecurityContextHolder
+		        .getContext()
+		        .getAuthentication();
+		
+		boolean gerente = authentication.getAuthorities()
+				.stream()
+				.anyMatch(permissao ->
+						permissao.getAuthority().equals("ROLE_GERENTE"));
+		
+		if(!proprioUsuario && !gerente) {
+			throw new AccessDeniedException(
+					"Você não tem permissão para consultar este usuário."
+				);
+			}
 		
 		return converterParaResponse(usuario);
 	}
