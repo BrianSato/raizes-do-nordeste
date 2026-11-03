@@ -35,3 +35,26 @@ VALUES (
     'CLIENTE'
 )
 ON DUPLICATE KEY UPDATE id = id;
+-- Segundo cliente utilizado nos testes de autorização T16 e T17
+INSERT INTO usuario (id, nome, email, cpf, senha, role)
+VALUES (
+    2,
+    'Cliente Teste 2',
+    'cliente2@exemplo.com',
+    NULL,
+    '$2a$10$p0/C/Q2r1JBoipjH9haVtu9P8vOTymP4QQwfBG.IQx6bXUsrWRQpq',
+    'CLIENTE'
+)
+ON DUPLICATE KEY UPDATE id = id;
+
+-- Gerente utilizado nos testes de autorização T17 e autenticação T18
+INSERT INTO usuario (id, nome, email, cpf, senha, role)
+VALUES (
+    3,
+    'Gerente Teste',
+    'gerente.teste@exemplo.com',
+    NULL,
+    '$2a$10$hGDxXkXHLFRu2Al7jlWr0.B/S0i/TDvRu27LwZdyqPcWaZIFCFESS',
+    'GERENTE'
+)
+ON DUPLICATE KEY UPDATE id = id;
