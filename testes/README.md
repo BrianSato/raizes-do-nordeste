@@ -639,7 +639,7 @@ Esse cenário verifica se a API permite que um cliente autenticado consulte seus
 Você não tem permissão para acessar este recurso.
 ```
 
-Esse cenário verifica se a API impedeque um cliente autenticado consulte os dados de outro usuario, retornando 403 Forbo.
+Esse cenário verifica se a API impedeque um cliente autenticado consulte os dados de outro usuario, retornando 403 Forbidden.
 
 **Evidência:** requisição `T16 - Cliente consulta outro usuário` na pasta `Auth` do Postman.
 
@@ -680,10 +680,9 @@ Esse cenário verifica se a API permite que um usuário com perfil GERENTE consu
 
 O script de pós-resposta do Postman armazena automaticamente o token JWT na variável de ambiente `tokenGerente`, permitindo sua utilização nas requisições que exigem autenticação com perfil GERENTE.
 
-**Evidência:** requisição `T18 - Login válido(GERENTE)` na pasta `Auth`..
+**Evidência:** requisição `T18 - Login válido(GERENTE)` na pasta `Auth` do Postman.
 
----
-
+----
 ## 9. Resumo dos cenários
 
 | ID       | Tipo     | Método | Endpoint                  | Resultado esperado |

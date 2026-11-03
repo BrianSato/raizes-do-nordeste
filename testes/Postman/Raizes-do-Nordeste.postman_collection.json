@@ -11,14 +11,14 @@
       "name": "Auth",
       "item": [
         {
-          "name": "T01 - Login válido",
+          "name": "T01 - Login válido(CLIENTE)",
           "event": [
             {
               "listen": "test",
               "script": {
                 "type": "text/javascript",
                 "exec": [
-                  "pm.test(\"T01 - Login deve retornar HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\nconst resposta = pm.response.json();\r\npm.environment.set(\"token\", resposta.token);"
+                  "pm.test(\"T01 - Login deve retornar HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\nconst resposta = pm.response.json();\r\npm.environment.set(\"tokenCliente\", resposta.token);"
                 ]
               }
             }
@@ -29,6 +29,43 @@
             "body": {
               "mode": "raw",
               "raw": "{\r\n    \"email\": \"teste@teste.com\",\r\n    \"senha\": \"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T18 - Login válido(GERENTE)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T18 - Login do gerente deve retornar HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"T18 - Login deve retornar um JWT\", function () {\r\n    const resposta = pm.response.json();\r\n\r\n    pm.expect(resposta.token).to.be.a(\"string\");\r\n    pm.expect(resposta.token.split(\".\")).to.have.lengthOf(3);\r\n});\r\n\r\nif (pm.response.code === 200) {\r\n    const resposta = pm.response.json();\r\n    pm.environment.set(\"tokenGerente\", resposta.token);\r\n}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"gerente.teste@exemplo.com\",\r\n  \"senha\": \"GerenteTeste@2026\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -95,7 +132,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -111,6 +148,152 @@
                 "fidelidade",
                 "1",
                 "pontos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T14 - Consulta de usuário sem token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T14 - Acesso sem token deve retornar HTTP 401\", function () {\r\n    pm.response.to.have.status(401);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T15 - Cliente consulta próprio usuário",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T15 - Cliente deve consultar seus próprios dados (HTTP 200)\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"T15 - Resposta deve pertencer ao usuário autenticado\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.email).to.eql(\"teste@teste.com\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T16 - Cliente consulta outro usuáro",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T16 - Cliente não pode consultar outro usuário (HTTP 403)\", function () {\r\n    pm.response.to.have.status(403);\r\n});\r\n\r\npm.test(\"T16 - Resposta deve indicar falta de permissão\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.erro).to.eql(\"SEM_PERMISSAO\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T17 - Gerente consulta outro usuário",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T17 - Gerente pode consultar outro usuário (HTTP 200)\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"T17 - Resposta deve conter os dados do usuário consultado\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.email).to.eql(\"cliente2@exemplo.com\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenGerente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "2"
               ]
             }
           },
@@ -140,7 +323,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -187,7 +370,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -227,7 +410,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -267,7 +450,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -312,7 +495,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -359,7 +542,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -406,7 +589,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -453,7 +636,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -492,7 +675,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -539,7 +722,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -586,7 +769,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -630,7 +813,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -677,7 +860,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -724,7 +907,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -771,7 +954,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "{{token}}",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]
@@ -800,6 +983,12 @@
           "response": []
         }
       ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "json_web_token_0dqh",
+      "secret": true
     }
   ]
 }
