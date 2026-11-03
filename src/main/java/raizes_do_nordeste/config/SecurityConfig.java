@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import raizes_do_nordeste.api.exception.ErroResponse;
 
@@ -22,7 +23,10 @@ public class SecurityConfig {
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final ObjectMapper objectMapper =
-	        new ObjectMapper().findAndRegisterModules();
+	        new ObjectMapper()
+	            .findAndRegisterModules()
+	            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		
