@@ -283,6 +283,7 @@ Para reproduzir os testes, recomenda-se executar as requisições na seguinte or
    - T09.1.1 — Pagamento sem campo aprovado
    - T09.2 — Pagamento aprovado
    - T09.3 — Confirmar status do pedido
+   - T09.4 — Alterar status para EM_PREPARACAO
    - T10.1 — Criar pedido para pagamento recusado
    - T10.2 — Pagamento recusado
    - T10.3 — Confirmar status após pagamento recusado
@@ -493,6 +494,18 @@ O cenário T09 representa o fluxo principal com pagamento aprovado.
 
 **Evidência:** requisição `T09.3 - Confirmar status do pedido` na pasta `Fluxos de Pedido e Pagamento`.
 
+#### T09.4 — Alterar status do pedido para EM_PREPARACAO
+
+**Endpoint:** `PUT /pedidos/{{pedidoIdAprovacao}}/status?novoStatus=EM_PREPARACAO`
+
+**Pré-condição:** pagamento do pedido aprovado no T09.2 e usuário deve estar autenticado como perfil GERENTE.
+
+**Entrada:** ID do pedido criado no T09.1.
+
+**Resultado esperado:** `200 OK`, com o pedido apresentando status `EM_PREPARACAO`.
+
+**Evidência:** requisição `T09.4 - Alterar status do pedido para EM_PREPARACAO` na pasta `Fluxos de Pedido e Pagamento`.
+
 ---
 
 ### T10 — Pagamento recusado
@@ -682,38 +695,37 @@ O script de pós-resposta do Postman armazena automaticamente o token JWT na var
 
 **Evidência:** requisição `T18 - Login válido(GERENTE)` na pasta `Auth` do Postman.
 
-----
+----
+
 ## 9. Resumo dos cenários
 
-| ID       | Tipo     | Método | Endpoint                  | Resultado esperado |
-| -------- | -------- | ------ | ------------------------- | ------------------ |
-| T01      | Positivo | POST   | `/auth`                   | 200                |
-| T02      | Negativo | GET    | `/pedidos/{id}`           | 401                |
-| T03      | Negativo | POST   | `/fidelidade/{id}/pontos` | 403                |
-| T04      | Negativo | POST   | `/pedidos`                | 400                |
-| T05      | Negativo | POST   | `/pedidos`                | 400                |
-| T06      | Negativo | POST   | `/pedidos`                | 404                |
-| T07      | Negativo | POST   | `/pedidos`                | 404                |
-| T08      | Negativo | POST   | `/pedidos`                | 409                |
-| T09.1    | Positivo | POST   | `/pedidos`                | 201                |
-| T09.1.1  | Negativo | POST   | `/pagamentos`             | 400                |
-| T09.2    | Positivo | POST   | `/pagamentos`             | 200                |
-| T09.3    | Positivo | GET    | `/pedidos/{id}`           | 200                |
-| T10.1    | Positivo | POST   | `/pedidos`                | 201                |
-| T10.2    | Positivo | POST   | `/pagamentos`             | 200                |
-| T10.3    | Positivo | GET    | `/pedidos/{id}`           | 200                |
-| T11      | Positivo | GET    | `/unidades/1/cardapio`    | 200                |
-| T12      | Positivo | GET    | `/unidades/2/cardapio`    | 200                |
-| T13      | Negativo | GET    | `/unidades/9999/cardapio` | 404                |
-| T14      | Negativo | GET    | `/usuarios/2`              | 401                |
-| T15      | Positivo | GET    | `/usuarios/1`             | 200                |
-| T16      | Negativo | GET    | `/usuarios/2`             | 403                |
-| T17      | Positivo | GET    | `/usuarios/2`             | 200                |
-| T18      | Positivo | POST   | `/auth`                   | 200                |
-
+| ID | Tipo | Método | Endpoint | Resultado esperado |
+|---|---|---|---|---|
+| T01 | Positivo | POST | `/auth` | 200 |
+| T02 | Negativo | GET | `/pedidos/{id}` | 401 |
+| T03 | Negativo | POST | `/fidelidade/{id}/pontos` | 403 |
+| T04 | Negativo | POST | `/pedidos` | 400 |
+| T05 | Negativo | POST | `/pedidos` | 400 |
+| T06 | Negativo | POST | `/pedidos` | 404 |
+| T07 | Negativo | POST | `/pedidos` | 404 |
+| T08 | Negativo | POST | `/pedidos` | 409 |
+| T09.1 | Positivo | POST | `/pedidos` | 201 |
+| T09.1.1 | Negativo | POST | `/pagamentos` | 400 |
+| T09.2 | Positivo | POST | `/pagamentos` | 200 |
+| T09.3 | Positivo | GET | `/pedidos/{id}` | 200 |
+| T09.4 | Positivo | PUT | `/pedidos/{id}/status` | 200 |
+| T10.1 | Positivo | POST | `/pedidos` | 201 |
+| T10.2 | Positivo | POST | `/pagamentos` | 200 |
+| T10.3 | Positivo | GET | `/pedidos/{id}` | 200 |
+| T11 | Positivo | GET | `/unidades/1/cardapio` | 200 |
+| T12 | Positivo | GET | `/unidades/2/cardapio` | 200 |
+| T13 | Negativo | GET | `/unidades/9999/cardapio` | 404 |
+| T14 | Negativo | GET | `/usuarios/2` | 401 |
+| T15 | Positivo | GET | `/usuarios/1` | 200 |
+| T16 | Negativo | GET | `/usuarios/2` | 403 |
+| T17 | Positivo | GET | `/usuarios/2` | 200 |
+| T18 | Positivo | POST | `/auth` | 200 |
 ---
-
-
 
 ## 10. Padrão de respostas de erro
 

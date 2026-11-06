@@ -4,7 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import raizes_do_nordeste.api.dto.ItemPedidoRequest;
 import raizes_do_nordeste.api.dto.ItemPedidoResponse;
@@ -16,7 +19,9 @@ import raizes_do_nordeste.domain.entity.Pedido;
 import raizes_do_nordeste.domain.entity.Produto;
 import raizes_do_nordeste.domain.entity.Unidade;
 import raizes_do_nordeste.domain.entity.Usuario;
+import raizes_do_nordeste.domain.enums.AcaoAuditoria;
 import raizes_do_nordeste.domain.enums.CanalPedido;
+import raizes_do_nordeste.domain.enums.ResultadoAuditoria;
 import raizes_do_nordeste.domain.enums.StatusPedido;
 import raizes_do_nordeste.infrastructure.repository.EstoqueProdutoRepository;
 import raizes_do_nordeste.infrastructure.repository.PedidoRepository;
@@ -26,139 +31,152 @@ import raizes_do_nordeste.infrastructure.repository.UsuarioRepository;
 
 @Service
 public class PedidoService {
-	
+
 	private final PedidoRepository pedidoRepository;
 	private final ProdutoRepository produtoRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final UnidadeRepository unidadeRepository;
 	private final EstoqueProdutoRepository estoqueProdutoRepository;
-	
-	//CONSTRUTOR
+	private final AuditoriaService auditoriaService;
+
+	// CONSTRUTOR
 	public PedidoService(PedidoRepository pedidoRepository, ProdutoRepository produtoRepository,
 			UsuarioRepository usuarioRepository, UnidadeRepository unidadeRepository,
-			EstoqueProdutoRepository estoqueProdutoRepository) {
-		super();
+			EstoqueProdutoRepository estoqueProdutoRepository, AuditoriaService auditoriaService) {
+
 		this.pedidoRepository = pedidoRepository;
 		this.produtoRepository = produtoRepository;
 		this.usuarioRepository = usuarioRepository;
 		this.unidadeRepository = unidadeRepository;
 		this.estoqueProdutoRepository = estoqueProdutoRepository;
+		this.auditoriaService = auditoriaService;
 	}
-	
-	//MÉTODOS
+
+	// MÉTODOS
 	public PedidoResponse buscarPorId(Integer id) {
-		
-		Pedido pedido = pedidoRepository
-				.findById(id)
-				.orElseThrow();
-		
+
+		Pedido pedido = pedidoRepository.findById(id).orElseThrow();
+
 		return converterParaResponse(pedido);
 	}
-	public List<PedidoResponse> listarPedidos(
-			StatusPedido status,
-			CanalPedido canalPedido){
-		
+
+	public List<PedidoResponse> listarPedidos(StatusPedido status, CanalPedido canalPedido) {
+
 		List<Pedido> pedidos;
-		
-		if(status != null && canalPedido != null) {
-			pedidos = pedidoRepository
-					.findByStatusAndCanalPedido(status, canalPedido);
-		} else if(status != null) {
-			pedidos = pedidoRepository
-					.findByStatus(status);
-		}else if(canalPedido != null) {
-			pedidos = pedidoRepository
-					.findByCanalPedido(canalPedido);
-		}else {
+
+		if (status != null && canalPedido != null) {
+			pedidos = pedidoRepository.findByStatusAndCanalPedido(status, canalPedido);
+		} else if (status != null) {
+			pedidos = pedidoRepository.findByStatus(status);
+		} else if (canalPedido != null) {
+			pedidos = pedidoRepository.findByCanalPedido(canalPedido);
+		} else {
 			pedidos = pedidoRepository.findAll();
 		}
-		
-		return pedidos.stream()
-				.map(this::converterParaResponse)
-				.toList();
+
+		return pedidos.stream().map(this::converterParaResponse).toList();
 	}
+
 	public Pedido salvar(Pedido pedido) {
 		return pedidoRepository.save(pedido);
 	}
+
+	@Transactional
 	public PedidoResponse criarPedido(PedidoRequest pedidoRequest) {
-		
+
 		Pedido pedido = new Pedido();
 		pedido.setCanalPedido(pedidoRequest.getCanalPedido());
 		pedido.setDataHora(LocalDateTime.now());
-		
-		Usuario usuario = usuarioRepository
-				.findById(pedidoRequest.getUsuarioId())
-				.orElseThrow();
-		
-		Unidade unidade = unidadeRepository
-				.findById(pedidoRequest.getUnidadeId())
-				.orElseThrow();
-		
+
+		Usuario usuario = usuarioRepository.findById(pedidoRequest.getUsuarioId()).orElseThrow();
+
+		Unidade unidade = unidadeRepository.findById(pedidoRequest.getUnidadeId()).orElseThrow();
+
 		pedido.setUsuario(usuario);
 		pedido.setUnidade(unidade);
-		
-		for(ItemPedidoRequest itemRequest: pedidoRequest.getItens()) {
-			
-			Produto produto = produtoRepository
-					.findById(itemRequest.getProdutoId())
-					.orElseThrow();
-			
-			EstoqueProduto estoque = estoqueProdutoRepository
-					.findByProdutoAndUnidade(produto, unidade)
-					.orElseThrow(() -> new IllegalStateException(
-							"Produto não disponível nesta unidade"
-							));
-			
-			if(estoque.getQuantidade() < itemRequest.getQuantidade()) {
-				throw new IllegalStateException(
-						"Estoque insuficiente para o produto: " + produto.getNome()
-				);
-				
+
+		for (ItemPedidoRequest itemRequest : pedidoRequest.getItens()) {
+
+			Produto produto = produtoRepository.findById(itemRequest.getProdutoId()).orElseThrow();
+
+			EstoqueProduto estoque = estoqueProdutoRepository.findByProdutoAndUnidade(produto, unidade)
+					.orElseThrow(() -> new IllegalStateException("Produto não disponível nesta unidade"));
+
+			if (estoque.getQuantidade() < itemRequest.getQuantidade()) {
+				throw new IllegalStateException("Estoque insuficiente para o produto: " + produto.getNome());
+
 			}
 			ItemPedido item = new ItemPedido();
-			
+
 			item.setProduto(produto);
 			item.setQuantidade(itemRequest.getQuantidade());
 			item.setPrecoUnitario(produto.getPreco());
-			
+
 			pedido.adicionarItem(item);
 		}
-		
+
 		pedido.calcularTotal();
-		
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication == null) {
+			throw new IllegalStateException("Usuário não identificado");
+		}
+
+		String emailAutenticado = authentication.getName();
+
+		Usuario usuarioAutenticado = usuarioRepository.findByEmail(emailAutenticado).orElseThrow();
+
 		Pedido pedidoSalvo = pedidoRepository.save(pedido);
-		
+
+		auditoriaService.registrarEvento(AcaoAuditoria.PEDIDO_CRIADO, usuarioAutenticado, pedidoSalvo, null,
+				pedidoSalvo.getStatus().name(), ResultadoAuditoria.SUCESSO);
+
 		return converterParaResponse(pedidoSalvo);
-		
+
 	}
+
+	@Transactional
 	public PedidoResponse atualizarStatus(Integer id, StatusPedido novoStatus) {
-		
-		Pedido pedido = pedidoRepository
-				.findById(id)
-				.orElseThrow();
-		
+
+		Pedido pedido = pedidoRepository.findById(id).orElseThrow();
+
+		StatusPedido statusAnterior = pedido.getStatus();
+
 		pedido.atualizarStatus(novoStatus);
-		
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication == null) {
+			throw new IllegalStateException("Usuário não identificado");
+		}
+
+		String emailAutenticado = authentication.getName();
+
+		Usuario usuarioAutenticado = usuarioRepository.findByEmail(emailAutenticado).orElseThrow();
+
 		Pedido pedidoSalvo = pedidoRepository.save(pedido);
-		
+
+		auditoriaService.registrarEvento(AcaoAuditoria.STATUS_ALTERADO, usuarioAutenticado, pedidoSalvo,
+				statusAnterior.name(), pedidoSalvo.getStatus().name(), ResultadoAuditoria.SUCESSO);
+
 		return converterParaResponse(pedidoSalvo);
 	}
+
 	public PedidoResponse cancelarPedido(Integer id) {
-		
-		Pedido pedido = pedidoRepository
-				.findById(id)
-				.orElseThrow();
-		
+
+		Pedido pedido = pedidoRepository.findById(id).orElseThrow();
+
 		pedido.cancelar();
-		
+
 		Pedido pedidoSalvo = pedidoRepository.save(pedido);
-		
+
 		return converterParaResponse(pedidoSalvo);
 	}
-	
+
 	private PedidoResponse converterParaResponse(Pedido pedido) {
 		PedidoResponse response = new PedidoResponse();
-		
+
 		response.setId(pedido.getId());
 		response.setCanalPedido(pedido.getCanalPedido());
 		response.setDataHora(pedido.getDataHora());
@@ -166,22 +184,22 @@ public class PedidoService {
 		response.setValorTotal(pedido.getValorTotal());
 		response.setUsuarioId(pedido.getUsuario().getId());
 		response.setUnidadeId(pedido.getUnidade().getId());
-		
+
 		List<ItemPedidoResponse> itensResponse = new ArrayList<>();
-		
-		for(ItemPedido item : pedido.getItens()) {
-			
+
+		for (ItemPedido item : pedido.getItens()) {
+
 			ItemPedidoResponse itemResponse = new ItemPedidoResponse();
-			
+
 			itemResponse.setProdutoId(item.getProduto().getId());
 			itemResponse.setQuantidade(item.getQuantidade());
 			itemResponse.setPrecoUnitario(item.getPrecoUnitario());
-			
+
 			itensResponse.add(itemResponse);
 		}
-		
+
 		response.setItens(itensResponse);
-		
+
 		return response;
 	}
 }
