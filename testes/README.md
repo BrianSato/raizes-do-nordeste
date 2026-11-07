@@ -282,8 +282,10 @@ Para reproduzir os testes, recomenda-se executar as requisições na seguinte or
    - T09.1 — Criar pedido para pagamento
    - T09.1.1 — Pagamento sem campo aprovado
    - T09.2 — Pagamento aprovado
+   - T09.2.1 — Pagamento recusado
    - T09.3 — Confirmar status do pedido
    - T09.4 — Alterar status para EM_PREPARACAO
+   - T09.5 — Cliente sem permissão para alterar status
    - T10.1 — Criar pedido para pagamento recusado
    - T10.2 — Pagamento recusado
    - T10.3 — Confirmar status após pagamento recusado
@@ -474,13 +476,25 @@ O cenário T09 representa o fluxo principal com pagamento aprovado.
 
 **Endpoint:** `POST /pagamentos`
 
-**Pré-condição:** pedido criado no T09.1.
+**Pré-condição:** pedido criado no T09.1 ainda sem pagamento registrado.
 
 **Entrada:** pagamento mock com aprovação.
 
 **Resultado esperado:** `200 OK`, pagamento com status `APROVADO`.
 
 **Evidência:** requisição `T09.2 - Pagamento aprovado` na pasta `Fluxos de Pedido e Pagamento`.
+
+#### T09.2.1 — Pagamento recusado
+
+**Endpoint:** `POST /pagamentos`
+
+**Pré-condição:** pedido criado no T09.1 ainda sem pagamento registrado.
+
+**Entrada:** pagamento mock com reprovação.
+
+**Resultado esperado:** `200 OK`, pagamento com status `RECUSADO`.
+
+**Evidência:** requisição `T09.2.1 - Pagamento recusado` na pasta `Fluxos de Pedido e Pagamento`.
 
 #### T09.3 — Confirmar status do pedido
 
@@ -500,11 +514,23 @@ O cenário T09 representa o fluxo principal com pagamento aprovado.
 
 **Pré-condição:** pagamento do pedido aprovado no T09.2 e usuário deve estar autenticado como perfil GERENTE.
 
-**Entrada:** ID do pedido criado no T09.1.
+**Entrada:** ID do pedido criado no T09.1 e token do GERENTE.
 
 **Resultado esperado:** `200 OK`, com o pedido apresentando status `EM_PREPARACAO`.
 
 **Evidência:** requisição `T09.4 - Alterar status do pedido para EM_PREPARACAO` na pasta `Fluxos de Pedido e Pagamento`.
+
+#### T09.5 — Cliente sem permissão para alterar status
+
+**Endpoint:** `PUT /pedidos/{{pedidoIdAprovacao}}/status?novoStatus=EM_PREPARACAO`
+
+**Pré-condição:** usuário autenticado com perfil CLIENTE e pedido existente.
+
+**Entrada:** ID do pedido criado no T09.1 e token do CLIENTE.
+
+**Resultado esperado:** `403 Forbidden`, com o pedido apresentando status `SEM_PERMISSAO`.
+
+**Evidência:** requisição `T09.5 - Cliente sem permissão para alterar status` na pasta `Fluxos de Pedido e Pagamento`.
 
 ---
 
@@ -712,8 +738,10 @@ O script de pós-resposta do Postman armazena automaticamente o token JWT na var
 | T09.1 | Positivo | POST | `/pedidos` | 201 |
 | T09.1.1 | Negativo | POST | `/pagamentos` | 400 |
 | T09.2 | Positivo | POST | `/pagamentos` | 200 |
+| T09.2.1 | Positivo | POST | `/pagamentos` | 200 |
 | T09.3 | Positivo | GET | `/pedidos/{id}` | 200 |
 | T09.4 | Positivo | PUT | `/pedidos/{id}/status` | 200 |
+| T09.5 | Negativo | PUT | `/pedidos/{id}/status` | 403 |
 | T10.1 | Positivo | POST | `/pedidos` | 201 |
 | T10.2 | Positivo | POST | `/pagamentos` | 200 |
 | T10.3 | Positivo | GET | `/pedidos/{id}` | 200 |

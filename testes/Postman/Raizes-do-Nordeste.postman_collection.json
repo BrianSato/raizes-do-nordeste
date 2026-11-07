@@ -618,6 +618,53 @@
           "response": []
         },
         {
+          "name": "T09.2.1- Pagamento recusado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T09.2.1 - Status HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"T09.2.1 - Pagamento recusado\", function () {\r\n    const resposta = pm.response.json();\r\n    pm.expect(resposta.status).to.eql(\"RECUSADO\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"pedidoId\": {{pedidoIdAprovacao}},\r\n    \"formaPagamento\": \"MOCK\",\r\n    \"aprovado\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pagamentos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pagamentos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "T09.3 - Confirmar status do pedido",
           "event": [
             {
@@ -809,6 +856,52 @@
                 {
                   "key": "token",
                   "value": "{{tokenGerente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/pedidos/{{pedidoIdAprovacao}}/status?novoStatus=EM_PREPARACAO",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pedidos",
+                "{{pedidoIdAprovacao}}",
+                "status"
+              ],
+              "query": [
+                {
+                  "key": "novoStatus",
+                  "value": "EM_PREPARACAO"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "T09.5 - Cliente sem permissão para alterar status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"T09.5 - Status HTTP 403\", function () {\r\n    pm.response.to.have.status(403);\r\n});\r\n\r\npm.test(\"T09.5 - Erro de permissão\", function () {\r\n    const resposta = pm.response.json();\r\n\r\n    pm.expect(resposta.erro).to.eql(\"SEM_PERMISSAO\");\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCliente}}",
                   "type": "string"
                 }
               ]

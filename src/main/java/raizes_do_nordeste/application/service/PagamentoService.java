@@ -2,6 +2,8 @@ package raizes_do_nordeste.application.service;
 
 import java.time.LocalDateTime;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,12 +14,16 @@ import raizes_do_nordeste.domain.entity.Fidelizacao;
 import raizes_do_nordeste.domain.entity.ItemPedido;
 import raizes_do_nordeste.domain.entity.Pagamento;
 import raizes_do_nordeste.domain.entity.Pedido;
+import raizes_do_nordeste.domain.entity.Usuario;
+import raizes_do_nordeste.domain.enums.AcaoAuditoria;
+import raizes_do_nordeste.domain.enums.ResultadoAuditoria;
 import raizes_do_nordeste.domain.enums.StatusPagamento;
 import raizes_do_nordeste.domain.enums.StatusPedido;
 import raizes_do_nordeste.infrastructure.repository.EstoqueProdutoRepository;
 import raizes_do_nordeste.infrastructure.repository.FidelizacaoRepository;
 import raizes_do_nordeste.infrastructure.repository.PagamentoRepository;
 import raizes_do_nordeste.infrastructure.repository.PedidoRepository;
+import raizes_do_nordeste.infrastructure.repository.UsuarioRepository;
 
 @Service
 public class PagamentoService {
@@ -26,17 +32,23 @@ public class PagamentoService {
 	private final PedidoRepository pedidoRepository;
 	private final EstoqueProdutoRepository estoqueProdutoRepository;
 	private final FidelizacaoRepository fidelizacaoRepository;
+	private final AuditoriaService auditoriaService;
+	private final UsuarioRepository usuarioRepository;
 
 	//CONSTRUTOR
 	public PagamentoService(
 			PagamentoRepository pagamentoRepository,
 			PedidoRepository pedidoRepository,
 			EstoqueProdutoRepository estoqueProdutoRepository,
-			FidelizacaoRepository fidelizacaoRepository) {
+			FidelizacaoRepository fidelizacaoRepository,
+			AuditoriaService auditoriaService,
+			UsuarioRepository usuarioRepository) {
 		this.pagamentoRepository = pagamentoRepository;
 		this.pedidoRepository = pedidoRepository;
 		this.estoqueProdutoRepository = estoqueProdutoRepository;
 		this.fidelizacaoRepository = fidelizacaoRepository;
+		this.auditoriaService = auditoriaService;
+		this.usuarioRepository = usuarioRepository;
 	}
 	
 	//MÉTODOS
@@ -60,6 +72,20 @@ public class PagamentoService {
 			throw new IllegalStateException(
 					"Pedido já possui um pagamento registrado");
 		}
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication == null || !authentication.isAuthenticated()) {
+		    throw new IllegalStateException("Usuário não identificado");
+		}
+
+		String emailAutenticado = authentication.getName();
+
+		Usuario usuarioAutenticado = usuarioRepository
+		        .findByEmail(emailAutenticado)
+		        .orElseThrow();
+		
+		StatusPedido statusAnterior = pedido.getStatus();
 		
 		Pagamento pagamento = new Pagamento();
 		
@@ -112,6 +138,15 @@ public class PagamentoService {
 		}
 		
 		pedidoRepository.save(pedido);
+		
+		auditoriaService.registrarEvento(
+			    AcaoAuditoria.PAGAMENTO_PROCESSADO,
+			    usuarioAutenticado,
+			    pedido,
+			    statusAnterior.name(),
+			    pedido.getStatus().name(),
+			    ResultadoAuditoria.SUCESSO
+			);
 		
 		return converterParaResponse(pagamentoSalvo);
 	}
