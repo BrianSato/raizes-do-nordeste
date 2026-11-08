@@ -883,6 +883,55 @@
           "response": []
         },
         {
+          "name": "T09.6 - Cancelar pedido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "\r\npm.test(\"T09.6 - Cancelamento deve retornar HTTP 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\npm.test(\"T09.6 - Pedido deve estar CANCELADO\", function () {\r\n    const resposta = pm.response.json();\r\n\r\n    pm.expect(resposta.status).to.eql(\"CANCELADO\");\r\n});\r\n\r\npm.test(\"T09.6 - Deve cancelar o pedido correto\", function () {\r\n    const resposta = pm.response.json();\r\n\r\n    pm.expect(resposta.id).to.eql(\r\n        Number(pm.environment.get(\"pedidoIdAprovacao\"))\r\n    );\r\n});\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{tokenCliente}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"pedidoId\": {{pedidoIdAprovacao}},\r\n    \"formaPagamento\": \"MOCK\",\r\n    \"aprovado\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pedidos/{{pedidoIdAprovacao}}/cancelar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "pedidos",
+                "{{pedidoIdAprovacao}}",
+                "cancelar"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "T09.5 - Cliente sem permissão para alterar status",
           "event": [
             {

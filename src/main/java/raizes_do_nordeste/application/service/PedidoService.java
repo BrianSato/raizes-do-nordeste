@@ -163,13 +163,35 @@ public class PedidoService {
 		return converterParaResponse(pedidoSalvo);
 	}
 
+	@Transactional
 	public PedidoResponse cancelarPedido(Integer id) {
 
 		Pedido pedido = pedidoRepository.findById(id).orElseThrow();
+		
+		StatusPedido statusAnterior = pedido.getStatus();
 
 		pedido.cancelar();
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		
+		if(authentication == null) {
+			throw new IllegalStateException("Usuário não identificado");
+		}
+		
+		String emailAutenticado = authentication.getName();
+		
+		Usuario usuarioAutenticado = usuarioRepository.findByEmail(emailAutenticado).orElseThrow();
 
 		Pedido pedidoSalvo = pedidoRepository.save(pedido);
+		
+		auditoriaService.registrarEvento(
+			    AcaoAuditoria.PEDIDO_CANCELADO,
+			    usuarioAutenticado,
+			    pedidoSalvo,
+			    statusAnterior.name(),
+			    pedidoSalvo.getStatus().name(),
+			    ResultadoAuditoria.SUCESSO
+			);
 
 		return converterParaResponse(pedidoSalvo);
 	}

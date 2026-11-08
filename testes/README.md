@@ -286,6 +286,7 @@ Para reproduzir os testes, recomenda-se executar as requisições na seguinte or
    - T09.3 — Confirmar status do pedido
    - T09.4 — Alterar status para EM_PREPARACAO
    - T09.5 — Cliente sem permissão para alterar status
+   - T09.6 — Cancelar pedido
    - T10.1 — Criar pedido para pagamento recusado
    - T10.2 — Pagamento recusado
    - T10.3 — Confirmar status após pagamento recusado
@@ -532,6 +533,18 @@ O cenário T09 representa o fluxo principal com pagamento aprovado.
 
 **Evidência:** requisição `T09.5 - Cliente sem permissão para alterar status` na pasta `Fluxos de Pedido e Pagamento`.
 
+#### T09.6 — Cancelar pedido
+
+**Endpoint:** `PUT /pedidos/{{pedidoIdAprovacao}}/cancelar`
+
+**Pré-condição:** usuário autenticado com perfil CLIENTE e pedido existente, ainda com o status `AGUARDANDO_PAGAMENTO`.
+
+**Entrada:** ID do pedido criado no T09.1 e token do CLIENTE.
+
+**Resultado esperado:** `200 OK`, com o pedido apresentando status `CANCELADO`.
+
+**Evidência:** requisição `T09.6 - Cancelar pedido` na pasta `Fluxos de Pedido e Pagamento`.
+
 ---
 
 ### T10 — Pagamento recusado
@@ -742,6 +755,7 @@ O script de pós-resposta do Postman armazena automaticamente o token JWT na var
 | T09.3 | Positivo | GET | `/pedidos/{id}` | 200 |
 | T09.4 | Positivo | PUT | `/pedidos/{id}/status` | 200 |
 | T09.5 | Negativo | PUT | `/pedidos/{id}/status` | 403 |
+| T09.6 | Positivo | PUT | `/pedidos/{id}/cancelar` | 200 |
 | T10.1 | Positivo | POST | `/pedidos` | 201 |
 | T10.2 | Positivo | POST | `/pagamentos` | 200 |
 | T10.3 | Positivo | GET | `/pedidos/{id}` | 200 |
@@ -830,19 +844,36 @@ Esses testes verificam se a API identifica corretamente os usuários autenticado
 
 ---
 
+
 ## 12. Logs e auditoria
 
-**Status: não implementado.**
+**Status: implementado.**
 
-O projeto não possui, neste momento, um mecanismo específico de logs de auditoria para registrar ações sensíveis da aplicação.
-
-Essa funcionalidade não foi incluída no escopo do MVP entregue, que priorizou a implementação e validação do fluxo principal obrigatório:
+O projeto possui um mecanismo de auditoria para registrar eventos relevantes do fluxo principal da aplicação:
 
 ```text
 Pedido → Pagamento mock → Atualização de status
 ```
 
-A ausência de logs/auditoria deve ser considerada uma limitação da versão atual do projeto.
+Os eventos auditados são:
+
+- **PEDIDO_CRIADO:** registra a criação de um pedido.
+- **PAGAMENTO_PROCESSADO:** registra o processamento de pagamentos aprovados ou recusados.
+- **STATUS_ALTERADO:** registra alterações no status do pedido.
+- **PEDIDO_CANCELADO:** registra o cancelamento de um pedido.
+
+Os registros são armazenados na tabela `registro_auditoria` do banco de dados MySQL, contendo informações como:
+
+- Ação realizada.
+- Data e hora do evento.
+- Usuário responsável.
+- Pedido relacionado.
+- Status anterior e novo status do pedido.
+- Resultado da operação.
+
+A implementação utiliza as classes `RegistroAuditoria` e `AuditoriaService`, responsáveis pela representação e persistência dos eventos de auditoria.
+
+O funcionamento foi validado por meio dos testes realizados no Postman e da consulta aos registros armazenados no MySQL.
 
 ---
 
