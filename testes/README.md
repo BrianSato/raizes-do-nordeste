@@ -282,14 +282,16 @@ Para reproduzir os testes, recomenda-se executar as requisições na seguinte or
    - T09.1 — Criar pedido para pagamento
    - T09.1.1 — Pagamento sem campo aprovado
    - T09.2 — Pagamento aprovado
-   - T09.2.1 — Pagamento recusado
    - T09.3 — Confirmar status do pedido
    - T09.4 — Alterar status para EM_PREPARACAO
    - T09.5 — Cliente sem permissão para alterar status
-   - T09.6 — Cancelar pedido
+   - T09.6 — Criar novo pedido para pagamento
+   - T09.6.1 — Cancelar pedido
    - T10.1 — Criar pedido para pagamento recusado
    - T10.2 — Pagamento recusado
    - T10.3 — Confirmar status após pagamento recusado
+   
+   **Observação sobre o T09.6:** antes de executar o teste de cancelamento, execute novamente o T09.1 para criar um novo pedido com status `AGUARDANDO_PAGAMENTO`. O T09.1 atualiza a variável `pedidoIdAprovacao` com o ID do novo pedido, permitindo que o T09.6 utilize um pedido válido para cancelamento.
 
 4. **Erros**
    - T04 — Campo obrigatório ausente
@@ -485,18 +487,6 @@ O cenário T09 representa o fluxo principal com pagamento aprovado.
 
 **Evidência:** requisição `T09.2 - Pagamento aprovado` na pasta `Fluxos de Pedido e Pagamento`.
 
-#### T09.2.1 — Pagamento recusado
-
-**Endpoint:** `POST /pagamentos`
-
-**Pré-condição:** pedido criado no T09.1 ainda sem pagamento registrado.
-
-**Entrada:** pagamento mock com reprovação.
-
-**Resultado esperado:** `200 OK`, pagamento com status `RECUSADO`.
-
-**Evidência:** requisição `T09.2.1 - Pagamento recusado` na pasta `Fluxos de Pedido e Pagamento`.
-
 #### T09.3 — Confirmar status do pedido
 
 **Endpoint:** `GET /pedidos/{id}`
@@ -533,17 +523,31 @@ O cenário T09 representa o fluxo principal com pagamento aprovado.
 
 **Evidência:** requisição `T09.5 - Cliente sem permissão para alterar status` na pasta `Fluxos de Pedido e Pagamento`.
 
-#### T09.6 — Cancelar pedido
+#### T09.6 — Criar pedido para cancelamento
 
-**Endpoint:** `PUT /pedidos/{{pedidoIdAprovacao}}/cancelar`
+**Endpoint:** `POST /pedidos`
 
-**Pré-condição:** usuário autenticado com perfil CLIENTE e pedido existente, ainda com o status `AGUARDANDO_PAGAMENTO`.
+**Pré-condição:** usuário autenticado, produto e unidade existentes e estoque disponível.
 
-**Entrada:** ID do pedido criado no T09.1 e token do CLIENTE.
+**Entrada:** pedido válido contendo canal, unidade e item.
+
+**Resultado esperado:** `201 Created`, com o pedido apresentando status `AGUARDANDO_PAGAMENTO`.
+
+O script de pós-resposta armazena automaticamente o ID do pedido criado na variável `pedidoIdCancelamento`.
+
+**Evidência:** requisição `T09.6 - Criar pedido para cancelamento` na pasta `Fluxos de Pedido e Pagamento`.
+
+#### T09.6.1 — Cancelar pedido
+
+**Endpoint:** `PUT /pedidos/{{pedidoIdCancelamento}}/cancelar`
+
+**Pré-condição:** pedido criado no T09.6, ainda com status `AGUARDANDO_PAGAMENTO`, e usuário autenticado com perfil CLIENTE.
+
+**Entrada:** ID do pedido armazenado na variável `pedidoIdCancelamento`.
 
 **Resultado esperado:** `200 OK`, com o pedido apresentando status `CANCELADO`.
 
-**Evidência:** requisição `T09.6 - Cancelar pedido` na pasta `Fluxos de Pedido e Pagamento`.
+**Evidência:** requisição `T09.6.1 - Cancelar pedido` na pasta `Fluxos de Pedido e Pagamento`.
 
 ---
 
@@ -751,7 +755,6 @@ O script de pós-resposta do Postman armazena automaticamente o token JWT na var
 | T09.1 | Positivo | POST | `/pedidos` | 201 |
 | T09.1.1 | Negativo | POST | `/pagamentos` | 400 |
 | T09.2 | Positivo | POST | `/pagamentos` | 200 |
-| T09.2.1 | Positivo | POST | `/pagamentos` | 200 |
 | T09.3 | Positivo | GET | `/pedidos/{id}` | 200 |
 | T09.4 | Positivo | PUT | `/pedidos/{id}/status` | 200 |
 | T09.5 | Negativo | PUT | `/pedidos/{id}/status` | 403 |
