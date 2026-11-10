@@ -290,8 +290,6 @@ Para reproduzir os testes, recomenda-se executar as requisições na seguinte or
    - T10.1 — Criar pedido para pagamento recusado
    - T10.2 — Pagamento recusado
    - T10.3 — Confirmar status após pagamento recusado
-   
-   **Observação sobre o T09.6:** antes de executar o teste de cancelamento, execute novamente o T09.1 para criar um novo pedido com status `AGUARDANDO_PAGAMENTO`. O T09.1 atualiza a variável `pedidoIdAprovacao` com o ID do novo pedido, permitindo que o T09.6 utilize um pedido válido para cancelamento.
 
 4. **Erros**
    - T04 — Campo obrigatório ausente
