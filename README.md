@@ -87,8 +87,13 @@ Essa organização busca separar as responsabilidades, facilitar a manutenção 
 ### Configuração do banco de dados
 
 1. Instale e configure o MySQL.
-2. Crie um banco de dados e um usuário MySQL com as permissões necessárias.
-3. Configure as seguintes variáveis de ambiente:
+2. Crie o banco de dados `raizes_nordeste` executando o seguinte comando SQL:
+
+   ```sql
+   CREATE DATABASE raizes_nordeste;
+   ```
+
+3. Configure um usuário MySQL com as permissões necessárias para acessar o banco de dados criado e defina as seguintes variáveis de ambiente:
 
 | Variável | Descrição |
 |---|---|
@@ -97,7 +102,22 @@ Essa organização busca separar as responsabilidades, facilitar a manutenção 
 | `DB_PASSWORD` | Senha definida pelo próprio usuário ao configurar o MySQL. |
 | `JWT_SECRET` | Chave secreta utilizada para assinar e validar os tokens JWT. |
 
-As variáveis podem ser configuradas no sistema operacional ou nas configurações de execução da IDE, como a aba **Environment** do Eclipse.
+
+**Configuração da chave JWT:** a variável `JWT_SECRET` deve conter uma chave secreta com pelo menos 32 bytes (256 bits), utilizada para assinar e validar os tokens de autenticação.
+
+No Windows, é possível gerar uma chave aleatória utilizando o PowerShell:
+
+```powershell
+$bytes = New-Object byte[] 32
+$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$rng.GetBytes($bytes)
+[Convert]::ToBase64String($bytes)
+$rng.Dispose()
+```
+
+Copie a chave gerada e utilize-a como valor da variável de ambiente `JWT_SECRET`.
+
+A chave deve ser mantida exclusivamente no ambiente local e não deve ser publicada no repositório.
 
 O arquivo `.env.example`, disponível na raiz do projeto, apresenta um
 modelo das variáveis de ambiente necessárias. Os valores são ilustrativos

@@ -150,30 +150,34 @@ O teste T08 utiliza a variável de ambiente `quantidadeEstoqueInsuficiente`, con
 
 ---
 
-## 6. Configuração do Postman
 
-A coleção de testes utiliza a variável:
+### Configuração das variáveis de ambiente
 
-```text
-baseUrl = http://localhost:8080
-```
+Antes de executar os testes, crie um ambiente no Postman
+com o nome `Raizes do Nordeste - Local`.
 
-Também são utilizadas duas variáveis de ambiente para armazenar os tokens JWT:
+Adicione as seguintes variáveis:
 
-```text
-tokenCliente
-tokenGerente
-```
+| Variável | Valor inicial | Descrição |
+|---|---|---|
+| `baseUrl` | `http://localhost:8080` | Endereço base da API. |
+| `tokenCliente` | Vazio | Token JWT do perfil CLIENTE. |
+| `tokenGerente` | Vazio | Token JWT do perfil GERENTE. |
+| `pedidoIdAprovacao` | Vazio | Identificador do pedido para pagamento aprovado. |
+| `pedidoIdRecusado` | Vazio | Identificador do pedido para pagamento recusado. |
+| `pedidoIdCancelamento` | Vazio | Identificador do pedido para cancelamento. |
+| `quantidadeEstoqueInsuficiente` | `999` | Quantidade superior ao estoque inicial disponível. |
 
-As variáveis `tokenCliente` e `tokenGerente` inicialmente devem estar vazias.
+Após configurar as variáveis, salve o ambiente e selecione-o
+como ambiente ativo no Postman.
 
-A separação dos tokens foi necessária após a inclusão dos novos testes de autenticação e autorização, que verificam o acesso aos endpoints conforme o perfil do usuário.
+As variáveis referentes aos tokens JWT e aos identificadores
+dos pedidos são preenchidas automaticamente pelos scripts
+de pós-resposta durante a execução dos testes.
 
-- **`tokenCliente`**: armazena o JWT de um usuário com perfil `CLIENTE`, utilizado nas requisições que exigem autenticação desse perfil.
-- **`tokenGerente`**: armazena o JWT de um usuário com perfil `GERENTE`, utilizado nos testes que exigem permissões gerenciais.
-
-Essa configuração permite executar testes com diferentes níveis de permissão sem precisar substituir manualmente um único token entre as requisições.
-
+A separação dos tokens permite executar testes de autenticação
+e autorização com diferentes perfis, sem a necessidade de
+substituir manualmente o JWT entre as requisições.
 
 ### Obtenção dos tokens
 
@@ -232,6 +236,7 @@ Authorization: Bearer {{tokenGerente}}
 > **Importante:** a separação dos tokens permite executar os testes de autenticação e autorização com diferentes perfis, sem a necessidade de substituir manualmente o JWT entre as requisições. Os testes T01 e T18 devem ser executados antes das requisições que dependem dos respectivos tokens.
 
 
+
 ### Importação e execução da coleção
 
 1. Abra o Postman.
@@ -239,15 +244,18 @@ Authorization: Bearer {{tokenGerente}}
    `testes/Postman/Raizes-do-Nordeste.postman_collection.json`.
 3. Verifique se a aplicação Spring Boot está em execução
    em `http://localhost:8080`.
-4. Confira se a variável `baseUrl` está configurada como
-   `http://localhost:8080` e se as variáveis `tokenCliente`
-   e `tokenGerente` estão inicialmente vazias.
-5. Abra a coleção importada e selecione **Run** para acessar
+4. Crie e configure o ambiente `Raizes do Nordeste - Local`
+   conforme as instruções de configuração das variáveis
+   de ambiente descritas nesta seção.
+5. Selecione o ambiente configurado como ambiente ativo
+   no Postman.
+6. Abra a coleção importada e selecione **Run** para acessar
    o Collection Runner.
-6. Confira a ordem das requisições conforme a seção 7
-   deste documento, garantindo que os tokens necessários
+7. Confira se o ambiente correto está selecionado e verifique
+   a ordem das requisições conforme a seção 7 deste documento,
+   garantindo que os tokens e os identificadores dos pedidos
    sejam obtidos antes dos testes que dependem deles.
-7. Execute a coleção e verifique os resultados dos testes
+8. Execute a coleção e verifique os resultados dos testes
    apresentados pelo Postman.
 
 **Observação:** os testes dependem dos dados iniciais
@@ -256,7 +264,6 @@ verifique o estoque disponível, pois pagamentos aprovados
 consomem unidades dos produtos.
 
 ---
-
 
 ## 7. Ordem recomendada para execução
 
