@@ -150,6 +150,7 @@ O teste T08 utiliza a variável de ambiente `quantidadeEstoqueInsuficiente`, con
 
 ---
 
+## 6. Configuração do Postman
 
 ### Configuração das variáveis de ambiente
 

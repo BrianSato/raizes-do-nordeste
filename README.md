@@ -97,7 +97,7 @@ Essa organização busca separar as responsabilidades, facilitar a manutenção 
 
 | Variável | Descrição |
 |---|---|
-| `DB_URL` | URL de conexão com o banco MySQL criado pelo usuário. Exemplo: `jdbc:mysql://localhost:3306/meu_banco` |
+| `DB_URL` | URL de conexão com o banco MySQL criado pelo usuário. Exemplo: `jdbc:mysql://localhost:3306/raizes_nordeste` |
 | `DB_USERNAME` | Nome do usuário MySQL configurado para acessar o banco. |
 | `DB_PASSWORD` | Senha definida pelo próprio usuário ao configurar o MySQL. |
 | `JWT_SECRET` | Chave secreta utilizada para assinar e validar os tokens JWT. |
