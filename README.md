@@ -80,7 +80,7 @@ Essa organização busca separar as responsabilidades, facilitar a manutenção 
 ### Pré-requisitos
 
 - JDK 17 ou superior, compatível com o Spring Boot 4.1.1.
-- Maven.
+- Maven Wrapper (incluído no projeto). Não é necessário instalar o Maven separadamente.
 - MySQL.
 - Uma ferramenta para realizar requisições HTTP, como o Postman.
 
@@ -162,7 +162,24 @@ Essas credenciais são fictícias e destinadas exclusivamente ao ambiente de des
 
 ### Executando a aplicação
 
+
+### Executando a aplicação
+
 Na raiz do projeto, execute:
+
+```bash
+./mvnw spring-boot:run
+```
+
+No Windows, também é possível utilizar o Prompt de Comando ou PowerShell:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+O projeto utiliza o Maven Wrapper, que permite executar a aplicação sem instalar o Maven separadamente. É necessário ter o JDK configurado e o MySQL disponível, além das variáveis de ambiente exigidas pela aplicação.
+
+Caso o Maven esteja instalado e configurado no sistema, também é possível executar:
 
 ```bash
 mvn spring-boot:run
