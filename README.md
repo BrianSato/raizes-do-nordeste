@@ -162,9 +162,6 @@ Essas credenciais são fictícias e destinadas exclusivamente ao ambiente de des
 
 ### Executando a aplicação
 
-
-### Executando a aplicação
-
 Na raiz do projeto, execute:
 
 ```bash
